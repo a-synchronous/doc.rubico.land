@@ -17,6 +17,11 @@ const {
 
 const { createElement, useState, useEffect, useReducer, useRef } = React
 
+const render = (container, fn) => props => ReactDOM.render(
+  createElement(fn, props),
+  container,
+)
+
 const identity = x => x
 
 const trace = tap(console.log)
@@ -59,7 +64,7 @@ const HeySayer = (props, children = []) => {
         console.log(clickMessage)
         setClicked(true)
       },
-    }, ['say hey once']),
+    }, ['say hey']),
   ])
 }
 
@@ -74,4 +79,4 @@ const props = {
   clickMessage: 'hey',
 }
 
-ReactDOM.render(createElement(HeySayer, props), document.getElementById('root'))
+render(document.getElementById('root'), HeySayer)(props)
