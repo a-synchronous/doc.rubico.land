@@ -45,26 +45,26 @@ const P = e('p')
 const Button = e('button')
 const Iframe = e('iframe')
 
-const HeySayer = (props, children = []) => {
+const Clicker = (props, children = []) => {
   const { styles, assets, clickMessage } = props
-  const [clicked, setClicked] = useState(false)
+  const [clicked, setClicked] = useState(0)
   useEffect(() => {
-    console.log('I\'m an effect of HeySayer!')
+    console.log(`clicked ${clicked} times`)
   })
   return Div({
-    id: 'say-hey',
+    id: 'clicker',
     style: styles.div,
   }, [
     Img({
       src: assets.lolSrc,
       alt: assets.lolSrc,
     }),
+    P({}, [`clicked ${clicked} times`]),
     Button({
       onClick: () => {
-        console.log(clickMessage)
-        setClicked(true)
+        setClicked(clicked + 1)
       },
-    }, ['say hey']),
+    }, ['click']),
   ])
 }
 
@@ -79,4 +79,4 @@ const props = {
   clickMessage: 'hey',
 }
 
-render(document.getElementById('root'), HeySayer)(props)
+render(document.getElementById('root'), Clicker)(props)
