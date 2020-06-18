@@ -1,5 +1,5 @@
-tour.rubico.land
+doc.rubico.land
 
 ```
-./deploy tour.rubico.land .
+./deploy doc.rubico.land .
 ```
