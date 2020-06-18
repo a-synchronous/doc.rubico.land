@@ -17,10 +17,7 @@ const {
 
 const { createElement, useState, useEffect, useReducer, useRef } = React
 
-const render = (container, fn) => props => ReactDOM.render(
-  createElement(fn, props),
-  container,
-)
+const render = (container, component) => ReactDOM.render(component, container)
 
 const identity = x => x
 
@@ -32,7 +29,9 @@ const isFunction = x => typeof x === 'function'
 
 const isPromise = x => x && typeof x.then === 'function'
 
-const e = type => (props, children = []) => createElement(type, props, ...children)
+const e = type => (
+  props = {}, children = []
+) => React.createElement(type, props, ...children)
 
 const Script = e('script')
 const Html = e('html')
@@ -45,8 +44,8 @@ const P = e('p')
 const Button = e('button')
 const Iframe = e('iframe')
 
-const Clicker = (props, children = []) => {
-  const { styles, assets, clickMessage } = props
+const Clicker = e(x => {
+  const { styles, assets, clickMessage } = x
   const [clicked, setClicked] = useState(0)
   useEffect(() => {
     console.log(`clicked ${clicked} times`)
@@ -59,16 +58,22 @@ const Clicker = (props, children = []) => {
       src: assets.lolSrc,
       alt: assets.lolSrc,
     }),
-    P({}, [`clicked ${clicked} times`]),
+    P(null, [`clicked ${clicked} times`]),
     Button({
       onClick: () => {
         setClicked(clicked + 1)
       },
     }, ['click']),
   ])
-}
+})
 
-const props = {
+const Divz = e(x => Div(null, [
+  Div(),
+  Clicker(x),
+  Div(),
+]))
+
+const x = {
   assets: {
     lolSrc: 'https://tour.rubico.land/assets/thank-you-michael-scott.gif',
   },
@@ -79,4 +84,4 @@ const props = {
   clickMessage: 'hey',
 }
 
-render(document.getElementById('root'), Clicker)(props)
+render(document.getElementById('root'), Divz(x))
