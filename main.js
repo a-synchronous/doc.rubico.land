@@ -36,11 +36,16 @@ const e = type => (
 const Script = e('script')
 const Html = e('html')
 const Body = e('body')
+const Section = e('section')
 const Span = e('span')
 const Div = e('div')
 const Img = e('img')
 const H1 = e('h1')
+const H2 = e('h2')
+const H3 = e('h3')
 const P = e('p')
+const Ul = e('ul')
+const Li = e('li')
 const Button = e('button')
 const Iframe = e('iframe')
 
@@ -73,6 +78,51 @@ const Divz = e(x => Div(null, [
   Div(),
 ]))
 
+const RubicoAPIMethodLink = name => e(x => {
+  return Div({}, [
+    Button({
+      onClick: () => {
+        x.goto(name)
+      },
+    }, [name]),
+  ])
+})
+
+const RubicoAPI = e(x => Div(null, [
+  Section(null, [
+    H2(null, ['function composition']),
+    Ul(null, [
+      RubicoAPIMethodLink('pipe')(x),
+      RubicoAPIMethodLink('tap')(x),
+      RubicoAPIMethodLink('tryCatch')(x),
+      RubicoAPIMethodLink('switchCase')(x),
+    ]),
+  ]),
+]))
+
+const NotFound = e(() => H1(null, ['not found']))
+
+const rubicoAPIMethods = new Set([
+  'pipe', 'tap', 'tryCatch', 'switchCase',
+])
+
+const Root = e(x => {
+  const [hash, setHash] = useState(location.hash)
+  return pipe([
+    assign({
+      goto: () => methodName => {
+        setHash('#' + methodName)
+        history.pushState({}, '', '#' + methodName)
+      },
+    }),
+    switchCase([
+      eq('', hash), RubicoAPI,
+      () => rubicoAPIMethods.has(hash.slice(1)), RubicoAPI, // RubicoAPIMethod
+      NotFound,
+    ]),
+  ])(x)
+})
+
 const x = {
   assets: {
     lolSrc: 'https://tour.rubico.land/assets/thank-you-michael-scott.gif',
@@ -84,4 +134,4 @@ const x = {
   clickMessage: 'hey',
 }
 
-render(document.getElementById('root'), Divz(x))
+render(document.getElementById('root'), Root(x))
