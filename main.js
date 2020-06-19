@@ -43,6 +43,7 @@ const Img = e('img')
 const H1 = e('h1')
 const H2 = e('h2')
 const H3 = e('h3')
+const H4 = e('h4')
 const P = e('p')
 const Ul = e('ul')
 const Li = e('li')
@@ -78,13 +79,33 @@ const Divz = e(x => Div(null, [
   Div(),
 ]))
 
-const RubicoAPIMethodLink = name => e(x => {
-  return Div({}, [
+const RubicoAPIMethodLink = ({ name, description }) => e(x => {
+  return Div({
+    style: {
+    },
+  }, [
     Button({
+      style: {
+        backgroundColor: 'white',
+        border: 'none',
+        outline: 'none',
+        cursor: 'pointer',
+        margin: '.25em 0',
+        padding: '0 0',
+        display: 'inline',
+      },
       onClick: () => {
         x.goto(name)
       },
-    }, [name]),
+    }, [
+      H2({
+        style: {
+          margin: '0 0',
+          color: 'blue',
+        },
+      }, [name]),
+    ]),
+    Span({ style: { position: 'relative', top: '-0.05em' } }, [' - ', description])
   ])
 })
 
@@ -92,10 +113,22 @@ const RubicoAPI = e(x => Div(null, [
   Section(null, [
     H2(null, ['function composition']),
     Ul(null, [
-      RubicoAPIMethodLink('pipe')(x),
-      RubicoAPIMethodLink('tap')(x),
-      RubicoAPIMethodLink('tryCatch')(x),
-      RubicoAPIMethodLink('switchCase')(x),
+      RubicoAPIMethodLink({
+        name: 'pipe',
+        description: 'chain functions together 🔗',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'tap',
+        description: 'spy on data',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'tryCatch',
+        description: 'try a function, catch with another 🔗',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'switchCase',
+        description: 'control flow 🔗',
+      })(x),
     ]),
   ]),
 ]))

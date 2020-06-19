@@ -12,6 +12,10 @@ p {
   font-size: 1em;
 }
 
+ul {
+  padding-inline-start: 1em;
+}
+
 iframe {
   /* pointer-events: none; */
   border: none;
