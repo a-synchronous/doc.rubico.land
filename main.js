@@ -82,6 +82,7 @@ const Divz = e(x => Div(null, [
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   return Div({
     style: {
+      whiteSpace: 'nowrap',
     },
   }, [
     Button({
@@ -105,13 +106,22 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
         },
       }, [name]),
     ]),
-    Span({ style: { position: 'relative', top: '-0.05em' } }, [' - ', description])
+    Span({
+      style: {
+        position: 'relative',
+        top: '-0.05em',
+      },
+    }, [' - ' + description])
   ])
 })
 
 const RubicoAPI = e(x => Div(null, [
   Section(null, [
-    H2(null, ['function composition']),
+    H2({
+      style: {
+        whiteSpace: 'nowrap',
+      },
+    }, ['function composition']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'pipe',
