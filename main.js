@@ -121,23 +121,135 @@ const RubicoAPI = e(x => Div(null, [
       style: {
         whiteSpace: 'nowrap',
       },
-    }, ['function composition']),
+    }, ['data flow']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'pipe',
         description: 'chain functions together 🔗',
       })(x),
       RubicoAPIMethodLink({
+        name: 'fork',
+        description: 'duplicate and diverge flow ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'assign',
+        description: 'fork, then merge new flow with original ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
         name: 'tap',
-        description: 'spy on data',
+        description: 'spy on flow',
       })(x),
       RubicoAPIMethodLink({
         name: 'tryCatch',
-        description: 'try a function, catch with another 🔗',
+        description: 'try a flow, catch with another 🔗',
       })(x),
       RubicoAPIMethodLink({
         name: 'switchCase',
-        description: 'control flow 🔗',
+        description: 'logically control flow 🔗',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    H2({
+      style: {
+        whiteSpace: 'nowrap',
+      },
+    }, ['data transformation']),
+    Ul(null, [
+      RubicoAPIMethodLink({
+        name: 'map',
+        description: 'apply function to data ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'filter',
+        description: 'exclude data by predicate ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'reduce',
+        description: 'execute data transformation (idiomatic) 🔗',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'transform',
+        description: 'execute data transformation (expressive) 🔗',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    H2({
+      style: {
+        whiteSpace: 'nowrap',
+      },
+    }, ['predicate composition']),
+    Ul(null, [
+      RubicoAPIMethodLink({
+        name: 'any',
+        description: 'test if function of any data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'all',
+        description: 'test if function of all data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'and',
+        description: 'test if all functions of data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'or',
+        description: 'test if any functions of data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'not',
+        description: 'test if function of data falsy',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    H2({
+      style: {
+        whiteSpace: 'nowrap',
+      },
+    }, ['comparison']),
+    Ul(null, [
+      RubicoAPIMethodLink({
+        name: 'eq',
+        description: 'test if left equals right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'gt',
+        description: 'test if left > right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'lt',
+        description: 'test if left < right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'gte',
+        description: 'test if left >= right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'lte',
+        description: 'test if left <= right',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    H2({
+      style: {
+        whiteSpace: 'nowrap',
+      },
+    }, ['object convenience']),
+    Ul(null, [
+      RubicoAPIMethodLink({
+        name: 'get',
+        description: 'access a value by path or index',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'pick',
+        description: 'only include provided properties',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'omit',
+        description: 'exclude provided properties',
       })(x),
     ]),
   ]),
@@ -146,7 +258,12 @@ const RubicoAPI = e(x => Div(null, [
 const NotFound = e(() => H1(null, ['not found']))
 
 const rubicoAPIMethods = new Set([
-  'pipe', 'tap', 'tryCatch', 'switchCase',
+  'pipe', 'fork', 'assign',
+  'tap', 'tryCatch', 'switchCase',
+  'map', 'filter', 'reduce', 'transform',
+  'any', 'all', 'and', 'or', 'not',
+  'eq', 'gt', 'lt', 'gte', 'lte',
+  'get', 'pick', 'omit',
 ])
 
 const Root = e(x => {
