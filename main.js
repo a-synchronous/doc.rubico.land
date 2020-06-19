@@ -149,7 +149,7 @@ const RubicoAPI = e(x => Div(null, [
   Section(null, [
     H2({
       style: { whiteSpace: 'nowrap' },
-    }, ['data flow']),
+    }, ['dataflow']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'pipe',
@@ -185,7 +185,7 @@ const RubicoAPI = e(x => Div(null, [
   Section(null, [
     H2({
       style: { whiteSpace: 'nowrap' },
-    }, ['data transformation']),
+    }, ['transformation']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'map',
@@ -280,7 +280,7 @@ const RubicoAPI = e(x => Div(null, [
   Section(null, [
     H2({
       style: { whiteSpace: 'nowrap' },
-    }, ['object convenience']),
+    }, ['operation']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'get',
