@@ -140,10 +140,19 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
 
 const RubicoAPI = e(x => Div(null, [
   Section(null, [
+    P(null, [`
+rubico is a robust, highly optimized, and dependency free syntax for async agnostic functional programming in JavaScript. The style and naming of the syntax is idiomatic across languages and other libraries; using this library should feel second nature. Just like regular vanilla JavaScript syntax and operators, rubico operates predictably on vanilla JavaScript types. When you use this library, you can stop worrying about the complex fluff of Promise management. When something goes wrong, rubico throws meaningful and ergonomic errors. You should use this library if you want to become a better programmer, write cleaner and more concise code, or harness the expressive power of functional programming in production.
+    `]),
     P(null, [
-      '🔗 - asynchronous flow in series',
-      Br(),
-      '⛓️  - asynchronous flow in parallel',
+      'The tags below denote the asynchronous behavior for a given method',
+    ]),
+    Ul(null, [
+      Li({
+        style: { listStyle: 'none' },
+      }, ['🔗 - executes in series']),
+      Li({
+        style: { listStyle: 'none' },
+      },['⛓️  - executes in parallel']),
     ]),
   ]),
   Section(null, [
@@ -298,8 +307,9 @@ const RubicoAPI = e(x => Div(null, [
   ]),
 ]))
 
-const RubicoAPIMethod = e(x => {
-})
+const RubicoAPIMethod = e(({ path }) => Div(null, [
+  H1(null, [path]),
+]))
 
 const NotFound = e(() => H1(null, ['not found']))
 
@@ -314,17 +324,24 @@ const rubicoAPIMethods = new Set([
 
 const Root = e(x => {
   const [hash, setHash] = useState(location.hash)
+  useEffect(() => {
+    const setLocationHash = () => { setHash(location.hash) }
+    window.addEventListener('popstate', setLocationHash)
+    return () => {
+      window.removeEventListener('popstate', setLocationHash)
+    }
+  })
   return pipe([
     assign({
       goto: () => methodName => {
+        history.pushState({ path: methodName }, '', '#' + methodName)
         setHash(methodName)
-        history.pushState({}, '', '#' + methodName)
       },
       path: () => hash.startsWith('#') ? hash.slice(1) : hash,
     }),
     switchCase([
       eq('', hash), RubicoAPI,
-      x => rubicoAPIMethods.has(x.path), RubicoAPI,
+      x => rubicoAPIMethods.has(x.path), RubicoAPIMethod,
       NotFound,
     ]),
   ])(x)
