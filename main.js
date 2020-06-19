@@ -125,7 +125,7 @@ const RubicoAPI = e(x => Div(null, [
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'pipe',
-        description: 'chain functions together 🔗',
+        description: 'define flow, chain functions together 🔗',
       })(x),
       RubicoAPIMethodLink({
         name: 'fork',
