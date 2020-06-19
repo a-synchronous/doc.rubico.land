@@ -30,7 +30,7 @@ const isFunction = x => typeof x === 'function'
 const isPromise = x => x && typeof x.then === 'function'
 
 const e = type => (
-  props = {}, children = []
+  props = {}, children = [],
 ) => React.createElement(type, props, ...children)
 
 const Script = e('script')
@@ -45,6 +45,7 @@ const H2 = e('h2')
 const H3 = e('h3')
 const H4 = e('h4')
 const P = e('p')
+const B = e('b')
 const Ul = e('ul')
 const Li = e('li')
 const Button = e('button')
@@ -81,9 +82,7 @@ const Divz = e(x => Div(null, [
 
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   return Div({
-    style: {
-      whiteSpace: 'nowrap',
-    },
+    style: { whiteSpace: 'nowrap' },
   }, [
     Button({
       style: {
@@ -95,32 +94,53 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
         padding: '0 0',
         display: 'inline',
       },
-      onClick: () => {
-        x.goto(name)
-      },
+      onClick: () => { x.goto(name) },
     }, [
       H2({
-        style: {
-          margin: '0 0',
-          color: 'blue',
-        },
+        style: { margin: '0 0', color: 'blue' },
       }, [name]),
     ]),
     Span({
+      style: { position: 'relative', top: '-0.05em' },
+    }, [' - ' + description]),
+    Div({
+      style: { marginLeft: '1em' },
+    }, [x.children]),
+  ])
+})
+
+const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
+  return Div({
+    style: { whiteSpace: 'nowrap' },
+  }, [
+    Button({
       style: {
-        position: 'relative',
-        top: '-0.05em',
+        backgroundColor: 'white',
+        border: 'none',
+        outline: 'none',
+        cursor: 'text',
+        margin: '.25em 0',
+        padding: '0 0',
+        display: 'inline',
       },
-    }, [' - ' + description])
+    }, [
+      H3({
+        style: { margin: '0 0' },
+      }, [name]),
+    ]),
+    Span({
+      style: { position: 'relative', top: '-0.05em' },
+    }, [' - ' + description]),
+    Div({
+      style: { marginLeft: '1em' },
+    }, [x.children]),
   ])
 })
 
 const RubicoAPI = e(x => Div(null, [
   Section(null, [
     H2({
-      style: {
-        whiteSpace: 'nowrap',
-      },
+      style: { whiteSpace: 'nowrap' },
     }, ['data flow']),
     Ul(null, [
       RubicoAPIMethodLink({
@@ -130,7 +150,12 @@ const RubicoAPI = e(x => Div(null, [
       RubicoAPIMethodLink({
         name: 'fork',
         description: 'duplicate and diverge flow ⛓️',
-      })(x),
+      })(x, [
+        RubicoAPIMethodLinkDisabled({
+          name: 'fork.series',
+          description: 'fork in series 🔗',
+        })(x),
+      ]),
       RubicoAPIMethodLink({
         name: 'assign',
         description: 'fork, then merge new flow with original ⛓️',
@@ -151,19 +176,35 @@ const RubicoAPI = e(x => Div(null, [
   ]),
   Section(null, [
     H2({
-      style: {
-        whiteSpace: 'nowrap',
-      },
+      style: { whiteSpace: 'nowrap' },
     }, ['data transformation']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'map',
         description: 'apply function to data ⛓️',
-      })(x),
+      })(x, [
+        RubicoAPIMethodLinkDisabled({
+          name: 'map.pool',
+          description: 'map with asynchronous limit ⛓️',
+        })(x),
+        RubicoAPIMethodLinkDisabled({
+          name: 'map.withIndex',
+          description: 'map with index ⛓️',
+        })(x),
+        RubicoAPIMethodLinkDisabled({
+          name: 'map.series',
+          description: 'map in series 🔗',
+        })(x),
+      ]),
       RubicoAPIMethodLink({
         name: 'filter',
         description: 'exclude data by predicate ⛓️',
-      })(x),
+      })(x, [
+        RubicoAPIMethodLinkDisabled({
+          name: 'filter.withIndex',
+          description: 'filter with index ⛓️',
+        })(x),
+      ]),
       RubicoAPIMethodLink({
         name: 'reduce',
         description: 'execute data transformation (idiomatic) 🔗',
@@ -176,9 +217,7 @@ const RubicoAPI = e(x => Div(null, [
   ]),
   Section(null, [
     H2({
-      style: {
-        whiteSpace: 'nowrap',
-      },
+      style: { whiteSpace: 'nowrap' },
     }, ['predicate composition']),
     Ul(null, [
       RubicoAPIMethodLink({
@@ -205,9 +244,7 @@ const RubicoAPI = e(x => Div(null, [
   ]),
   Section(null, [
     H2({
-      style: {
-        whiteSpace: 'nowrap',
-      },
+      style: { whiteSpace: 'nowrap' },
     }, ['comparison']),
     Ul(null, [
       RubicoAPIMethodLink({
@@ -234,9 +271,7 @@ const RubicoAPI = e(x => Div(null, [
   ]),
   Section(null, [
     H2({
-      style: {
-        whiteSpace: 'nowrap',
-      },
+      style: { whiteSpace: 'nowrap' },
     }, ['object convenience']),
     Ul(null, [
       RubicoAPIMethodLink({
