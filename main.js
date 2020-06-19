@@ -298,6 +298,9 @@ const RubicoAPI = e(x => Div(null, [
   ]),
 ]))
 
+const RubicoAPIMethod = e(x => {
+})
+
 const NotFound = e(() => H1(null, ['not found']))
 
 const rubicoAPIMethods = new Set([
@@ -314,13 +317,14 @@ const Root = e(x => {
   return pipe([
     assign({
       goto: () => methodName => {
-        setHash('#' + methodName)
+        setHash(methodName)
         history.pushState({}, '', '#' + methodName)
       },
+      path: () => hash.startsWith('#') ? hash.slice(1) : hash,
     }),
     switchCase([
       eq('', hash), RubicoAPI,
-      () => rubicoAPIMethods.has(hash.slice(1)), RubicoAPI, // RubicoAPIMethod
+      x => rubicoAPIMethods.has(x.path), RubicoAPI,
       NotFound,
     ]),
   ])(x)
