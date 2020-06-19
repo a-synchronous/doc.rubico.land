@@ -50,6 +50,7 @@ const Ul = e('ul')
 const Li = e('li')
 const Button = e('button')
 const Iframe = e('iframe')
+const Br = e('br')
 
 const Clicker = e(x => {
   const { styles, assets, clickMessage } = x
@@ -138,6 +139,13 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
 })
 
 const RubicoAPI = e(x => Div(null, [
+  Section(null, [
+    P(null, [
+      '🔗 - asynchronous flow in series',
+      Br(),
+      '⛓️  - asynchronous flow in parallel',
+    ]),
+  ]),
   Section(null, [
     H2({
       style: { whiteSpace: 'nowrap' },
