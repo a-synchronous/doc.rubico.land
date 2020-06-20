@@ -103,6 +103,7 @@ const RubicoAPIHomeLink = e(x => {
 })
 
 const RubicoAPIMethodHeader = heading => e(x => H2({
+  /*
   style: x.path ? ({
     visibility: 'hidden',
     opacity: 0,
@@ -114,17 +115,9 @@ const RubicoAPIMethodHeader = heading => e(x => H2({
     maxHeight: '1em',
     transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
   }),
+  */
+  style: { marginTop: x.path ? '0' : 'auto' },
 }, [heading]))
-
-      /*
-      transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
-    }) : ({
-      visibility: 'visible',
-      opacity: 1,
-      maxHeight: '22%',
-      transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
-
-       * */
 
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   return Div({
@@ -149,27 +142,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
       }, [name]),
     ]),
     Div({
-      style: {
-        display: 'inline',
-        ...x.path ? ({
-          display: 'none',
-          visibility: 'hidden',
-          opacity: 0,
-        }) : ({
-          visibility: 'visible',
-          opacity: 1,
-          transition: 'opacity 0.25s linear',
-        }),
-      },
-      /*
-      transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
-    }) : ({
-      visibility: 'visible',
-      opacity: 1,
-      maxHeight: '22%',
-      transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
-
-       * */
+      style: { display: 'inline' },
     }, [
       Span({
         style: { position: 'relative', top: '-0.05em' },
@@ -216,15 +189,11 @@ const RubicoAPI = e(x => Div({
   Section(null, [RubicoAPIHomeLink(x)]),
   Section({
     style: x.path ? ({
-      visibility: 'hidden',
-      opacity: 0,
       maxHeight: '0%',
-      transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
+      transition: 'max-height .28s ease-out',
     }) : ({
-      visibility: 'visible',
-      opacity: 1,
       maxHeight: '22%',
-      transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
+      transition: 'max-height .28s ease-in',
     }),
   }, [
     P({
@@ -245,144 +214,148 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       },['⛓️  - executes in parallel']),
     ]),
   ]),
-  Section(null, [
-    RubicoAPIMethodHeader('dataflow')(x),
-    Ul(null, [
-      RubicoAPIMethodLink({
-        name: 'pipe',
-        description: 'define flow, chain functions together 🔗',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'fork',
-        description: 'duplicate and diverge flow ⛓️',
-      })(x, [
-        RubicoAPIMethodLinkDisabled({
-          name: 'fork.series',
-          description: 'fork in series 🔗',
+  Div({
+    style: { position: 'relative', zIndex: 1, backgroundColor: 'white' },
+  }, [
+    Section(null, [
+      RubicoAPIMethodHeader('dataflow')(x),
+      Ul(null, [
+        RubicoAPIMethodLink({
+          name: 'pipe',
+          description: 'define flow, chain functions together 🔗',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'fork',
+          description: 'duplicate and diverge flow ⛓️',
+        })(x, [
+          RubicoAPIMethodLinkDisabled({
+            name: 'fork.series',
+            description: 'fork in series 🔗',
+          })(x),
+        ]),
+        RubicoAPIMethodLink({
+          name: 'assign',
+          description: 'fork, then merge new flow with original ⛓️',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'tap',
+          description: 'spy on flow',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'tryCatch',
+          description: 'try a flow, catch with another 🔗',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'switchCase',
+          description: 'logically control flow 🔗',
         })(x),
       ]),
-      RubicoAPIMethodLink({
-        name: 'assign',
-        description: 'fork, then merge new flow with original ⛓️',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'tap',
-        description: 'spy on flow',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'tryCatch',
-        description: 'try a flow, catch with another 🔗',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'switchCase',
-        description: 'logically control flow 🔗',
-      })(x),
     ]),
-  ]),
-  Section(null, [
-    RubicoAPIMethodHeader('transformation')(x),
-    Ul(null, [
-      RubicoAPIMethodLink({
-        name: 'map',
-        description: 'apply function to data ⛓️',
-      })(x, [
-        RubicoAPIMethodLinkDisabled({
-          name: 'map.pool',
-          description: 'map with asynchronous limit ⛓️',
+    Section(null, [
+      RubicoAPIMethodHeader('transformation')(x),
+      Ul(null, [
+        RubicoAPIMethodLink({
+          name: 'map',
+          description: 'apply function to data ⛓️',
+        })(x, [
+          RubicoAPIMethodLinkDisabled({
+            name: 'map.pool',
+            description: 'map with asynchronous limit ⛓️',
+          })(x),
+          RubicoAPIMethodLinkDisabled({
+            name: 'map.withIndex',
+            description: 'map with index ⛓️',
+          })(x),
+          RubicoAPIMethodLinkDisabled({
+            name: 'map.series',
+            description: 'map in series 🔗',
+          })(x),
+        ]),
+        RubicoAPIMethodLink({
+          name: 'filter',
+          description: 'exclude data by predicate ⛓️',
+        })(x, [
+          RubicoAPIMethodLinkDisabled({
+            name: 'filter.withIndex',
+            description: 'filter with index ⛓️',
+          })(x),
+        ]),
+        RubicoAPIMethodLink({
+          name: 'reduce',
+          description: 'execute data transformation (idiomatic) 🔗',
         })(x),
-        RubicoAPIMethodLinkDisabled({
-          name: 'map.withIndex',
-          description: 'map with index ⛓️',
-        })(x),
-        RubicoAPIMethodLinkDisabled({
-          name: 'map.series',
-          description: 'map in series 🔗',
-        })(x),
-      ]),
-      RubicoAPIMethodLink({
-        name: 'filter',
-        description: 'exclude data by predicate ⛓️',
-      })(x, [
-        RubicoAPIMethodLinkDisabled({
-          name: 'filter.withIndex',
-          description: 'filter with index ⛓️',
+        RubicoAPIMethodLink({
+          name: 'transform',
+          description: 'execute data transformation (expressive) 🔗',
         })(x),
       ]),
-      RubicoAPIMethodLink({
-        name: 'reduce',
-        description: 'execute data transformation (idiomatic) 🔗',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'transform',
-        description: 'execute data transformation (expressive) 🔗',
-      })(x),
     ]),
-  ]),
-  Section(null, [
-    RubicoAPIMethodHeader('predicate composition')(x),
-    Ul(null, [
-      RubicoAPIMethodLink({
-        name: 'any',
-        description: 'test if function of any data truthy ⛓️',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'all',
-        description: 'test if function of all data truthy ⛓️',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'and',
-        description: 'test if all functions of data truthy ⛓️',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'or',
-        description: 'test if any functions of data truthy ⛓️',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'not',
-        description: 'test if function of data falsy',
-      })(x),
+    Section(null, [
+      RubicoAPIMethodHeader('predicate composition')(x),
+      Ul(null, [
+        RubicoAPIMethodLink({
+          name: 'any',
+          description: 'test if function of any data truthy ⛓️',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'all',
+          description: 'test if function of all data truthy ⛓️',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'and',
+          description: 'test if all functions of data truthy ⛓️',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'or',
+          description: 'test if any functions of data truthy ⛓️',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'not',
+          description: 'test if function of data falsy',
+        })(x),
+      ]),
     ]),
-  ]),
-  Section(null, [
-    RubicoAPIMethodHeader('comparison')(x),
-    Ul(null, [
-      RubicoAPIMethodLink({
-        name: 'eq',
-        description: 'test if left equals right',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'gt',
-        description: 'test if left > right',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'lt',
-        description: 'test if left < right',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'gte',
-        description: 'test if left >= right',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'lte',
-        description: 'test if left <= right',
-      })(x),
+    Section(null, [
+      RubicoAPIMethodHeader('comparison')(x),
+      Ul(null, [
+        RubicoAPIMethodLink({
+          name: 'eq',
+          description: 'test if left equals right',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'gt',
+          description: 'test if left > right',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'lt',
+          description: 'test if left < right',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'gte',
+          description: 'test if left >= right',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'lte',
+          description: 'test if left <= right',
+        })(x),
+      ]),
     ]),
-  ]),
-  Section(null, [
-    RubicoAPIMethodHeader('operation')(x),
-    Ul(null, [
-      RubicoAPIMethodLink({
-        name: 'get',
-        description: 'access a value by path or index',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'pick',
-        description: 'only include provided properties',
-      })(x),
-      RubicoAPIMethodLink({
-        name: 'omit',
-        description: 'exclude provided properties',
-      })(x),
+    Section(null, [
+      RubicoAPIMethodHeader('operation')(x),
+      Ul(null, [
+        RubicoAPIMethodLink({
+          name: 'get',
+          description: 'access a value by path or index',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'pick',
+          description: 'only include provided properties',
+        })(x),
+        RubicoAPIMethodLink({
+          name: 'omit',
+          description: 'exclude provided properties',
+        })(x),
+      ]),
     ]),
   ]),
 ]))
