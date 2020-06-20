@@ -125,7 +125,6 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   return Li({
     style: {
       height: '100%',
-      // backgroundColor: 'pink',
       listStyle: 'none',
       display: x.path ? 'inline-block' : 'block',
       marginRight: '0.85em',
