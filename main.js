@@ -96,7 +96,7 @@ const RubicoAPIHomeLink = e(x => {
       onClick: () => { x.gotoHome() },
     }, [
       H1({
-        style: { color: 'black', fontSize: '2em' },
+        style: { color: 'black' },
       }, ['🏞 rubico ']),
     ]),
   ])
@@ -385,6 +385,16 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
         })(x),
       ]),
     ]),
+    Br(),
+    x.path ? Section(null, [
+      Div({
+        style: {},
+      }, [
+        H1({
+          style: {},
+        }, [x.path]),
+      ]),
+    ]) : Div(),
   ]),
 ]))
 

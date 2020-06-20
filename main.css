@@ -4,6 +4,10 @@ body {
   grid-gap: 1em;
 }
 
+h1 {
+  font-size: 2em;
+}
+
 b, a {
   white-space: nowrap;
 }
