@@ -82,9 +82,7 @@ const Divz = e(x => Div(null, [
 ]))
 
 const RubicoAPIHomeLink = e(x => {
-  return Div({
-    style: { whiteSpace: 'nowrap' },
-  }, [
+  return Div(null, [
     Button({
       style: {
         backgroundColor: 'white',
@@ -105,9 +103,7 @@ const RubicoAPIHomeLink = e(x => {
 })
 
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
-  return Div({
-    style: { whiteSpace: 'nowrap' },
-  }, [
+  return Div(null, [
     Button({
       style: {
         backgroundColor: 'white',
@@ -124,19 +120,36 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
         style: { margin: '0 0', color: 'blue' },
       }, [name]),
     ]),
-    Span({
-      style: { position: 'relative', top: '-0.05em' },
-    }, [' - ' + description]),
     Div({
-      style: { marginLeft: '1em' },
-    }, [x.children]),
+      style: {
+        display: 'inline',
+      },
+      /*
+      style: x.path ? ({
+        visibility: 'hidden',
+        opacity: 0,
+        maxHeight: '0%',
+        transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
+      }) : ({
+        visibility: 'visible',
+        opacity: 1,
+        maxHeight: '22%',
+        transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
+      }),
+      */
+    }, [
+      Span({
+        style: { position: 'relative', top: '-0.05em' },
+      }, [' - ' + description]),
+      Div({
+        style: { marginLeft: '1em' },
+      }, [x.children]),
+    ]),
   ])
 })
 
 const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
-  return Div({
-    style: { whiteSpace: 'nowrap' },
-  }, [
+  return Div(null, [
     Button({
       style: {
         backgroundColor: 'white',
@@ -194,9 +207,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2({
-      style: { whiteSpace: 'nowrap' },
-    }, ['dataflow']),
+    H2(null, ['dataflow']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'pipe',
@@ -230,9 +241,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2({
-      style: { whiteSpace: 'nowrap' },
-    }, ['transformation']),
+    H2(null, ['transformation']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'map',
@@ -271,9 +280,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2({
-      style: { whiteSpace: 'nowrap' },
-    }, ['predicate composition']),
+    H2(null, ['predicate composition']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'any',
@@ -298,9 +305,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2({
-      style: { whiteSpace: 'nowrap' },
-    }, ['comparison']),
+    H2(null, ['comparison']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'eq',
@@ -325,9 +330,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2({
-      style: { whiteSpace: 'nowrap' },
-    }, ['operation']),
+    H2(null, ['operation']),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'get',
