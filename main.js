@@ -211,7 +211,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       }, ['🔗 - executes in series']),
       Li({
         style: { listStyle: 'none' },
-      },['⛓️  - executes in parallel']),
+      }, ['⛓️  - executes in parallel']),
     ]),
   ]),
   Div({
