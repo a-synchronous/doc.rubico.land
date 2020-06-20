@@ -138,8 +138,22 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
   ])
 })
 
-const RubicoAPI = e(x => Div(null, [
-  Section(null, [
+const RubicoAPI = e(x => Div({
+  style: { height: '100%' },
+}, [
+  Section({
+    style: x.path ? ({
+      visibility: 'hidden',
+      opacity: 0,
+      maxHeight: '0%',
+      transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
+    }) : ({
+      visibility: 'visible',
+      opacity: 1,
+      maxHeight: '22%',
+      transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
+    }),
+  }, [
     P(null, [`
 rubico is a robust, highly optimized, and dependency free syntax for async agnostic functional programming in JavaScript. The style and naming of the syntax is idiomatic across languages and other libraries; using this library should feel second nature. Just like regular vanilla JavaScript syntax and operators, rubico operates predictably on vanilla JavaScript types. When you use this library, you can stop worrying about the complex fluff of Promise management. When something goes wrong, rubico throws meaningful and ergonomic errors. You should use this library if you want to become a better programmer, write cleaner and more concise code, or harness the expressive power of functional programming in production.
     `]),
@@ -307,9 +321,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
   ]),
 ]))
 
-const RubicoAPIMethod = e(({ path }) => Div(null, [
-  H1(null, [path]),
-]))
+const RubicoAPIMethod = e(x => x.path ? Div() : Div())
 
 const NotFound = e(() => H1(null, ['not found']))
 
@@ -340,8 +352,15 @@ const Root = e(x => {
       path: () => hash.startsWith('#') ? hash.slice(1) : hash,
     }),
     switchCase([
-      eq('', hash), RubicoAPI,
-      x => rubicoAPIMethods.has(x.path), RubicoAPIMethod,
+      or([
+        eq('', hash),
+        x => rubicoAPIMethods.has(x.path),
+      ]), x => Div({
+        style: {
+          display: 'grid',
+          gridTemplateColumns: 'auto auto',
+        },
+      }, [RubicoAPI(x), RubicoAPIMethod(x)]),
       NotFound,
     ]),
   ])(x)
