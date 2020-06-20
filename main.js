@@ -240,6 +240,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       position: 'relative',
       zIndex: 1,
       width: x.path ? '125%' : '100%',
+      height: '100%',
       transform: x.path ? 'scale(.9, .9) translate(-6%, -6%)' : '',
       transition: 'transform .38s, width: 2s',
     },
@@ -426,9 +427,7 @@ const Root = e(x => {
         eq('', hash),
         x => rubicoAPIMethods.has(x.path),
       ]), x => Div({
-        style: {
-          display: 'grid',
-        },
+        style: { display: 'grid' }, // TODO: figure out why this has to be here
       }, [RubicoAPI(x)]),
       NotFound,
     ]),
