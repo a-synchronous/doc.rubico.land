@@ -81,6 +81,29 @@ const Divz = e(x => Div(null, [
   Div(),
 ]))
 
+const RubicoAPIHomeLink = e(x => {
+  return Div({
+    style: { whiteSpace: 'nowrap' },
+  }, [
+    Button({
+      style: {
+        backgroundColor: 'white',
+        border: 'none',
+        outline: 'none',
+        cursor: 'pointer',
+        margin: '.25em 0',
+        padding: '0 0',
+        display: 'inline',
+      },
+      onClick: () => { x.gotoHome() },
+    }, [
+      H1({
+        style: { color: 'black', fontSize: '2em' },
+      }, ['🏞 rubico documentation']),
+    ]),
+  ])
+})
+
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   return Div({
     style: { whiteSpace: 'nowrap' },
@@ -141,6 +164,7 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
 const RubicoAPI = e(x => Div({
   style: { height: '100%' },
 }, [
+  Section(null, [RubicoAPIHomeLink(x)]),
   Section({
     style: x.path ? ({
       visibility: 'hidden',
@@ -345,6 +369,10 @@ const Root = e(x => {
   })
   return pipe([
     assign({
+      gotoHome: () => () => {
+        history.pushState({}, '', '/')
+        setHash('')
+      },
       goto: () => methodName => {
         history.pushState({ path: methodName }, '', '#' + methodName)
         setHash(methodName)
