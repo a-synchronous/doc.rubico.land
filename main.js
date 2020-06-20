@@ -239,9 +239,9 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       backgroundColor: 'white',
       position: 'relative',
       zIndex: 1,
-      width: '125%',
+      width: x.path ? '125%' : '100%',
       transform: x.path ? 'scale(.9, .9) translate(-6%, -6%)' : '',
-      transition: 'transform .38s',
+      transition: 'transform .38s, width: 2s',
     },
   }, [
     Section(null, [
@@ -428,9 +428,8 @@ const Root = e(x => {
       ]), x => Div({
         style: {
           display: 'grid',
-          gridTemplateColumns: 'auto auto',
         },
-      }, [RubicoAPI(x), RubicoAPIMethod(x)]),
+      }, [RubicoAPI(x)]),
       NotFound,
     ]),
   ])(x)
