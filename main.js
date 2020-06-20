@@ -90,7 +90,6 @@ const RubicoAPIHomeLink = e(x => {
         border: 'none',
         outline: 'none',
         cursor: 'pointer',
-        margin: '.25em 0',
         padding: '0 0',
         display: 'inline',
       },
@@ -199,7 +198,7 @@ const RubicoAPI = e(x => Div({
 rubico is a robust, highly optimized, and dependency free syntax for async agnostic functional programming in JavaScript. The style and naming of the syntax is idiomatic across languages and other libraries; using this library should feel second nature. Just like regular vanilla JavaScript syntax and operators, rubico operates predictably on vanilla JavaScript types. When you use this library, you can stop worrying about the complex fluff of Promise management. When something goes wrong, rubico throws meaningful and ergonomic errors. You should use this library if you want to become a better programmer, write cleaner and more concise code, or harness the expressive power of functional programming in production.
     `]),
     P(null, [
-      'The tags below denote the asynchronous behavior for a given method',
+      'The tags below denote the asynchronous behavior of a given method',
     ]),
     Ul(null, [
       Li({
