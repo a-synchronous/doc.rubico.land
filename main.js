@@ -123,6 +123,7 @@ const RubicoAPIMethodLinkList = e(x => x.path ? Ul({
   style: {
     display: 'flex',
     justifyContent: 'flex-start',
+    flexWrap: 'wrap',
     margin: 0,
     transition: 'margin .5s',
   },
