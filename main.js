@@ -103,19 +103,6 @@ const RubicoAPIHomeLink = e(x => {
 })
 
 const RubicoAPIMethodHeader = heading => e(x => H2({
-  /*
-  style: x.path ? ({
-    visibility: 'hidden',
-    opacity: 0,
-    maxHeight: '0em',
-    transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
-  }) : ({
-    visibility: 'visible',
-    opacity: 1,
-    maxHeight: '1em',
-    transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
-  }),
-  */
   style: { margin: x.path ? '0' : '0em auto' },
 }, [heading]))
 
