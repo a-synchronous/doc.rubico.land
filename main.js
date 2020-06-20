@@ -116,15 +116,22 @@ const RubicoAPIMethodHeader = heading => e(x => H2({
     transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
   }),
   */
-  style: { marginTop: x.path ? '0' : 'auto' },
+  style: { margin: x.path ? '0' : '0em auto' },
 }, [heading]))
 
-const RubicoAPIMethodLinkList = e(x => x.path
-  ? Ul({ style: {
+const RubicoAPIMethodLinkList = e(x => x.path ? Ul({
+  style: {
     display: 'flex',
     justifyContent: 'flex-start',
-  } }, [x.children])
-  : Ul(null, [x.children]))
+    margin: 0,
+    transition: 'margin .5s',
+  },
+}, [x.children]) : Ul({
+  style: {
+    margin: '1em 0em',
+    transition: 'margin .5s',
+  },
+}, [x.children]))
 
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   return Li({
@@ -155,15 +162,6 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
       style: {
         display: x.path ? 'none' : 'inline',
       },
-      /*
-    style: x.path ? ({
-      maxHeight: '0%',
-      transition: 'max-height .28s ease-out',
-    }) : ({
-      maxHeight: '22%',
-      transition: 'max-height .28s ease-in',
-    }),
-      */
     }, [
       Span({
         style: { position: 'relative', top: '-0.05em' },
@@ -282,7 +280,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
     Section(null, [
       RubicoAPIMethodHeader('transformation')(x),
-      Ul(null, [
+      RubicoAPIMethodLinkList(x, [
         RubicoAPIMethodLink({
           name: 'map',
           description: 'apply function to data ⛓️',
@@ -321,7 +319,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
     Section(null, [
       RubicoAPIMethodHeader('predicate composition')(x),
-      Ul(null, [
+      RubicoAPIMethodLinkList(x, [
         RubicoAPIMethodLink({
           name: 'any',
           description: 'test if function of any data truthy ⛓️',
@@ -346,7 +344,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
     Section(null, [
       RubicoAPIMethodHeader('comparison')(x),
-      Ul(null, [
+      RubicoAPIMethodLinkList(x, [
         RubicoAPIMethodLink({
           name: 'eq',
           description: 'test if left equals right',
@@ -371,7 +369,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
     Section(null, [
       RubicoAPIMethodHeader('operation')(x),
-      Ul(null, [
+      RubicoAPIMethodLinkList(x, [
         RubicoAPIMethodLink({
           name: 'get',
           description: 'access a value by path or index',
