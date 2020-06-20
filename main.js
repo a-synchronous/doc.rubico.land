@@ -102,8 +102,37 @@ const RubicoAPIHomeLink = e(x => {
   ])
 })
 
+const RubicoAPIMethodHeader = heading => e(x => H2({
+  style: x.path ? ({
+    visibility: 'hidden',
+    opacity: 0,
+    maxHeight: '0em',
+    transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
+  }) : ({
+    visibility: 'visible',
+    opacity: 1,
+    maxHeight: '1em',
+    transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
+  }),
+}, [heading]))
+
+      /*
+      transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
+    }) : ({
+      visibility: 'visible',
+      opacity: 1,
+      maxHeight: '22%',
+      transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
+
+       * */
+
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
-  return Div(null, [
+  return Div({
+    style: {
+      height: '100%',
+      backgroundColor: 'pink',
+    },
+  }, [
     Button({
       style: {
         backgroundColor: 'white',
@@ -112,7 +141,6 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
         cursor: 'pointer',
         margin: '.25em 0',
         padding: '0 0',
-        display: 'inline',
       },
       onClick: () => { x.goto(name) },
     }, [
@@ -123,26 +151,34 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
     Div({
       style: {
         display: 'inline',
+        ...x.path ? ({
+          display: 'none',
+          visibility: 'hidden',
+          opacity: 0,
+        }) : ({
+          visibility: 'visible',
+          opacity: 1,
+          transition: 'opacity 0.25s linear',
+        }),
       },
       /*
-      style: x.path ? ({
-        visibility: 'hidden',
-        opacity: 0,
-        maxHeight: '0%',
-        transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
-      }) : ({
-        visibility: 'visible',
-        opacity: 1,
-        maxHeight: '22%',
-        transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
-      }),
-      */
+      transition: 'visibility 0s 0.1s, opacity 0.1s linear, max-height 0.25s ease-out',
+    }) : ({
+      visibility: 'visible',
+      opacity: 1,
+      maxHeight: '22%',
+      transition: 'opacity 0.25s linear, max-height 0.25s ease-in',
+
+       * */
     }, [
       Span({
         style: { position: 'relative', top: '-0.05em' },
       }, [' - ' + description]),
       Div({
-        style: { marginLeft: '1em' },
+        style: {
+          marginLeft: '1em',
+          display: x.path ? 'none' : 'block',
+        },
       }, [x.children]),
     ]),
   ])
@@ -210,7 +246,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2(null, ['dataflow']),
+    RubicoAPIMethodHeader('dataflow')(x),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'pipe',
@@ -244,7 +280,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2(null, ['transformation']),
+    RubicoAPIMethodHeader('transformation')(x),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'map',
@@ -283,7 +319,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2(null, ['predicate composition']),
+    RubicoAPIMethodHeader('predicate composition')(x),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'any',
@@ -308,7 +344,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2(null, ['comparison']),
+    RubicoAPIMethodHeader('comparison')(x),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'eq',
@@ -333,7 +369,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Section(null, [
-    H2(null, ['operation']),
+    RubicoAPIMethodHeader('operation')(x),
     Ul(null, [
       RubicoAPIMethodLink({
         name: 'get',
