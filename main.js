@@ -119,11 +119,21 @@ const RubicoAPIMethodHeader = heading => e(x => H2({
   style: { marginTop: x.path ? '0' : 'auto' },
 }, [heading]))
 
+const RubicoAPIMethodLinkList = e(x => x.path
+  ? Ul({ style: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+  } }, [x.children])
+  : Ul(null, [x.children]))
+
 const RubicoAPIMethodLink = ({ name, description }) => e(x => {
-  return Div({
+  return Li({
     style: {
       height: '100%',
-      backgroundColor: 'pink',
+      // backgroundColor: 'pink',
+      listStyle: 'none',
+      display: x.path ? 'inline-block' : 'block',
+      marginRight: '0.85em',
     },
   }, [
     Button({
@@ -142,12 +152,23 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
       }, [name]),
     ]),
     Div({
-      style: { display: 'inline' },
+      style: {
+        display: x.path ? 'none' : 'inline',
+      },
+      /*
+    style: x.path ? ({
+      maxHeight: '0%',
+      transition: 'max-height .28s ease-out',
+    }) : ({
+      maxHeight: '22%',
+      transition: 'max-height .28s ease-in',
+    }),
+      */
     }, [
       Span({
         style: { position: 'relative', top: '-0.05em' },
       }, [' - ' + description]),
-      Div({
+      Ul({
         style: {
           marginLeft: '1em',
           display: x.path ? 'none' : 'block',
@@ -158,7 +179,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
 })
 
 const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
-  return Div(null, [
+  return Li(null, [
     Button({
       style: {
         backgroundColor: 'white',
@@ -192,13 +213,14 @@ const RubicoAPI = e(x => Div({
       maxHeight: '0%',
       transition: 'max-height .28s ease-out',
     }) : ({
-      maxHeight: '22%',
+      maxHeight: '25%',
       transition: 'max-height .28s ease-in',
     }),
   }, [
     P({
       style: { fontSize: '0.8em', paddingInlineStart: '1em' },
     }, [I(null, ['a shallow river in northeastern Italy, just south of Ravenna'])]),
+    Br(),
     P(null, [`
 rubico is a robust, highly optimized, and dependency free syntax for async agnostic functional programming in JavaScript. The style and naming of the syntax is idiomatic across languages and other libraries; using this library should feel second nature. Just like regular vanilla JavaScript syntax and operators, rubico operates predictably on vanilla JavaScript types. When you use this library, you can stop worrying about the complex fluff of Promise management. When something goes wrong, rubico throws meaningful and ergonomic errors. You should use this library if you want to become a better programmer, write cleaner and more concise code, or harness the expressive power of functional programming in production.
     `]),
@@ -219,7 +241,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
   }, [
     Section(null, [
       RubicoAPIMethodHeader('dataflow')(x),
-      Ul(null, [
+      RubicoAPIMethodLinkList(x, [
         RubicoAPIMethodLink({
           name: 'pipe',
           description: 'define flow, chain functions together 🔗',
