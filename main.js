@@ -237,7 +237,14 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   Div({
-    style: { position: 'relative', zIndex: 1, backgroundColor: 'white' },
+    style: {
+      backgroundColor: 'white',
+      position: 'relative',
+      zIndex: 1,
+      width: '125%',
+      transform: x.path ? 'scale(.9, .9) translate(-6%, -6%)' : '',
+      transition: 'transform .38s',
+    },
   }, [
     Section(null, [
       RubicoAPIMethodHeader('dataflow')(x),
