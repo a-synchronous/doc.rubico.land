@@ -339,8 +339,8 @@ const RubicoAPIMethod = e(x => Div({
     width: '100%',
   },
 }, [
-  H1(null, [x.path]),
-  P(null, [x.method && x.method.description]),
+  H1(null, [x.name]),
+  P(null, [x.description]),
   Code(null, [Pre({
     style: {
       backgroundColor: 'darkslategrey',
@@ -349,8 +349,8 @@ const RubicoAPIMethod = e(x => Div({
       width: '85%',
       fontFamily: 'monospace',
     },
-  }, [x.method && x.method.example])]),
-  Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.method ? x.method.rules : [])]),
+  }, [x.signature])]),
+  Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.rules || [])]),
 ]))
 
 const RubicoAPI = e(x => Div({
@@ -388,7 +388,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   RubicoAPIMethods(x),
-  x.path ? Section(null, [RubicoAPIMethod(x)]) : Div(),
+  x.path ? Section(null, [RubicoAPIMethod(x.method)]) : Div(),
 ]))
 
 const NotFound = e(() => H1(null, ['not found']))
@@ -588,11 +588,15 @@ const transformCodeToIFrameSrc = pipe([
 
 const codeMirrors = new Map()
 
-// TODO: look into mounting issues
 const CodeRunner = e(x => {
   const codeAreaRef = useRef(null)
   const outputAreaRef = useRef(null)
   const [outputAreaSrc, setOutputAreaSrc] = useState(null)
+  useEffect(() => {
+    if (!codeMirrors.has(codeAreaRef)) return
+    codeMirrors.get(codeAreaRef).getDoc().setValue(x.code)
+    setOutputAreaSrc(null)
+  }, [x.code])
   useEffect(() => {
     const cm = CodeMirror(codeAreaRef.current, {
       value: x.code,
@@ -667,7 +671,8 @@ const x = {
   clickMessage: 'hey',
   methods: {
     pipe: {
-      example: 'y = pipe(functions)(x)',
+      name: 'pipe',
+      signature: 'y = pipe(functions)(x)',
       description: 'chain functions together, define flow 🔗',
       rules: [
         [SC('functions'), 'is an array of functions'],
@@ -708,7 +713,8 @@ ABCPromise.then(console.log)
       ],
     },
     fork: {
-      example: 'y = fork(functions)(x)',
+      name: 'fork',
+      signature: 'y = fork(functions)(x)',
       description: 'duplicate and diverge flow ⛓️',
       rules: [
         [SC('functions'), 'is an array of functions or an object of functions'],
