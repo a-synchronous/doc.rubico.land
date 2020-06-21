@@ -57,35 +57,6 @@ const Br = e('br')
 const Code = e('code')
 const Pre = e('pre')
 
-const Clicker = e(x => {
-  const { styles, assets, clickMessage } = x
-  const [clicked, setClicked] = useState(0)
-  useEffect(() => {
-    console.log(`clicked ${clicked} times`)
-  })
-  return Div({
-    id: 'clicker',
-    style: styles.div,
-  }, [
-    Img({
-      src: assets.lolSrc,
-      alt: assets.lolSrc,
-    }),
-    P(null, [`clicked ${clicked} times`]),
-    Button({
-      onClick: () => {
-        setClicked(clicked + 1)
-      },
-    }, ['click']),
-  ])
-})
-
-const Divz = e(x => Div(null, [
-  Div(),
-  Clicker(x),
-  Div(),
-]))
-
 const RUBICO_LINK_COLOR = 'darkslategrey'
 
 const RubicoAPIHomeLink = e(x => {
@@ -377,11 +348,9 @@ const RubicoAPIMethod = e(x => Div({
       padding: '.5em',
       width: '85%',
       fontFamily: 'monospace',
-      // fontSize: '1.25em',
     },
   }, [x.method && x.method.example])]),
   Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.method ? x.method.rules : [])]),
-  // RubicoAPIMethods(x),
 ]))
 
 const RubicoAPI = e(x => Div({
@@ -419,7 +388,6 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   RubicoAPIMethods(x),
-  // Br(), Br(), Br(), Br(), Br(), Br(), Br(),
   x.path ? Section(null, [RubicoAPIMethod(x)]) : Div(),
 ]))
 
