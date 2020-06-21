@@ -198,6 +198,157 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
   ])
 })
 
+const RubicoAPIMethods = e(x => Div({
+  style: {
+    backgroundColor: 'white',
+    position: 'relative',
+    zIndex: 1,
+    width: '100%',
+    minHeight: '16%',
+  },
+}, [
+  Section(null, [
+    RubicoAPIMethodHeader('dataflow')(x),
+    RubicoAPIMethodLinkList(x, [
+      RubicoAPIMethodLink({
+        name: 'pipe',
+        description: get('methods.pipe.description')(x),
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'fork',
+        description: get('methods.fork.description')(x),
+      })(x, [
+        RubicoAPIMethodLinkDisabled({
+          name: 'fork.series',
+          description: 'fork in series 🔗',
+        })(x),
+      ]),
+      RubicoAPIMethodLink({
+        name: 'assign',
+        description: 'fork, then merge new flow with original ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'tap',
+        description: 'spy on flow',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'tryCatch',
+        description: 'try a flow, catch with another 🔗',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'switchCase',
+        description: 'logically control flow 🔗',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    RubicoAPIMethodHeader('transformation')(x),
+    RubicoAPIMethodLinkList(x, [
+      RubicoAPIMethodLink({
+        name: 'map',
+        description: 'apply function to data ⛓️',
+      })(x, [
+        RubicoAPIMethodLinkDisabled({
+          name: 'map.pool',
+          description: 'map with asynchronous limit ⛓️',
+        })(x),
+        RubicoAPIMethodLinkDisabled({
+          name: 'map.withIndex',
+          description: 'map with index ⛓️',
+        })(x),
+        RubicoAPIMethodLinkDisabled({
+          name: 'map.series',
+          description: 'map in series 🔗',
+        })(x),
+      ]),
+      RubicoAPIMethodLink({
+        name: 'filter',
+        description: 'exclude data by predicate ⛓️',
+      })(x, [
+        RubicoAPIMethodLinkDisabled({
+          name: 'filter.withIndex',
+          description: 'filter with index ⛓️',
+        })(x),
+      ]),
+      RubicoAPIMethodLink({
+        name: 'reduce',
+        description: 'execute data transformation (idiomatic) 🔗',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'transform',
+        description: 'execute data transformation (expressive) 🔗',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    RubicoAPIMethodHeader('predicate composition')(x),
+    RubicoAPIMethodLinkList(x, [
+      RubicoAPIMethodLink({
+        name: 'any',
+        description: 'test if function of any data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'all',
+        description: 'test if function of all data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'and',
+        description: 'test if all functions of data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'or',
+        description: 'test if any functions of data truthy ⛓️',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'not',
+        description: 'test if function of data falsy',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    RubicoAPIMethodHeader('comparison')(x),
+    RubicoAPIMethodLinkList(x, [
+      RubicoAPIMethodLink({
+        name: 'eq',
+        description: 'test if left equals right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'gt',
+        description: 'test if left > right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'lt',
+        description: 'test if left < right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'gte',
+        description: 'test if left >= right',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'lte',
+        description: 'test if left <= right',
+      })(x),
+    ]),
+  ]),
+  Section(null, [
+    RubicoAPIMethodHeader('operation')(x),
+    RubicoAPIMethodLinkList(x, [
+      RubicoAPIMethodLink({
+        name: 'get',
+        description: 'access a value by path or index',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'pick',
+        description: 'only include provided properties',
+      })(x),
+      RubicoAPIMethodLink({
+        name: 'omit',
+        description: 'exclude provided properties',
+      })(x),
+    ]),
+  ]),
+]))
+
 const RubicoAPIMethodRule = (children, i) => Li({
   style: {
     listStyle: 'none',
@@ -208,7 +359,15 @@ const RubicoAPIMethodRule = (children, i) => Li({
   style: { marginRight: '.35em' },
 }, [child]))(children))
 
-const RubicoAPIMethod = e(x => Div(null, [
+const RubicoAPIMethod = e(x => Div({
+  style: {
+    padding: '2em 0em',
+    backgroundColor: 'white',
+    position: 'relative',
+    zIndex: 1,
+    width: '100%',
+  },
+}, [
   H1(null, [x.path]),
   P(null, [x.method && x.method.description]),
   Code(null, [Pre({
@@ -222,6 +381,7 @@ const RubicoAPIMethod = e(x => Div(null, [
     },
   }, [x.method && x.method.example])]),
   Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.method ? x.method.rules : [])]),
+  // RubicoAPIMethods(x),
 ]))
 
 const RubicoAPI = e(x => Div({
@@ -258,159 +418,9 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       }, ['⛓️  - executes in parallel']),
     ]),
   ]),
-  Div({
-    style: {
-      backgroundColor: 'white',
-      position: 'relative',
-      zIndex: 1,
-      // width: x.path ? '110%' : '100%',
-      width: '100%',
-      height: '100%',
-    },
-  }, [
-    Section(null, [
-      RubicoAPIMethodHeader('dataflow')(x),
-      RubicoAPIMethodLinkList(x, [
-        RubicoAPIMethodLink({
-          name: 'pipe',
-          description: 'chain functions together, define flow 🔗',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'fork',
-          description: 'duplicate and diverge flow ⛓️',
-        })(x, [
-          RubicoAPIMethodLinkDisabled({
-            name: 'fork.series',
-            description: 'fork in series 🔗',
-          })(x),
-        ]),
-        RubicoAPIMethodLink({
-          name: 'assign',
-          description: 'fork, then merge new flow with original ⛓️',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'tap',
-          description: 'spy on flow',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'tryCatch',
-          description: 'try a flow, catch with another 🔗',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'switchCase',
-          description: 'logically control flow 🔗',
-        })(x),
-      ]),
-    ]),
-    Section(null, [
-      RubicoAPIMethodHeader('transformation')(x),
-      RubicoAPIMethodLinkList(x, [
-        RubicoAPIMethodLink({
-          name: 'map',
-          description: 'apply function to data ⛓️',
-        })(x, [
-          RubicoAPIMethodLinkDisabled({
-            name: 'map.pool',
-            description: 'map with asynchronous limit ⛓️',
-          })(x),
-          RubicoAPIMethodLinkDisabled({
-            name: 'map.withIndex',
-            description: 'map with index ⛓️',
-          })(x),
-          RubicoAPIMethodLinkDisabled({
-            name: 'map.series',
-            description: 'map in series 🔗',
-          })(x),
-        ]),
-        RubicoAPIMethodLink({
-          name: 'filter',
-          description: 'exclude data by predicate ⛓️',
-        })(x, [
-          RubicoAPIMethodLinkDisabled({
-            name: 'filter.withIndex',
-            description: 'filter with index ⛓️',
-          })(x),
-        ]),
-        RubicoAPIMethodLink({
-          name: 'reduce',
-          description: 'execute data transformation (idiomatic) 🔗',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'transform',
-          description: 'execute data transformation (expressive) 🔗',
-        })(x),
-      ]),
-    ]),
-    Section(null, [
-      RubicoAPIMethodHeader('predicate composition')(x),
-      RubicoAPIMethodLinkList(x, [
-        RubicoAPIMethodLink({
-          name: 'any',
-          description: 'test if function of any data truthy ⛓️',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'all',
-          description: 'test if function of all data truthy ⛓️',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'and',
-          description: 'test if all functions of data truthy ⛓️',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'or',
-          description: 'test if any functions of data truthy ⛓️',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'not',
-          description: 'test if function of data falsy',
-        })(x),
-      ]),
-    ]),
-    Section(null, [
-      RubicoAPIMethodHeader('comparison')(x),
-      RubicoAPIMethodLinkList(x, [
-        RubicoAPIMethodLink({
-          name: 'eq',
-          description: 'test if left equals right',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'gt',
-          description: 'test if left > right',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'lt',
-          description: 'test if left < right',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'gte',
-          description: 'test if left >= right',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'lte',
-          description: 'test if left <= right',
-        })(x),
-      ]),
-    ]),
-    Section(null, [
-      RubicoAPIMethodHeader('operation')(x),
-      RubicoAPIMethodLinkList(x, [
-        RubicoAPIMethodLink({
-          name: 'get',
-          description: 'access a value by path or index',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'pick',
-          description: 'only include provided properties',
-        })(x),
-        RubicoAPIMethodLink({
-          name: 'omit',
-          description: 'exclude provided properties',
-        })(x),
-      ]),
-    ]),
-    Br(),
-    x.path ? Section(null, [RubicoAPIMethod(x)]) : Div(),
-  ]),
+  RubicoAPIMethods(x),
+  // Br(), Br(), Br(), Br(), Br(), Br(), Br(),
+  x.path ? Section(null, [RubicoAPIMethod(x)]) : Div(),
 ]))
 
 const NotFound = e(() => H1(null, ['not found']))
@@ -610,7 +620,7 @@ const transformCodeToIFrameSrc = pipe([
 
 const codeMirrors = new Map()
 
-// goal: make code mirror work in react
+// TODO: look into mounting issues
 const CodeRunner = e(x => {
   const codeAreaRef = useRef(null)
   const outputAreaRef = useRef(null)
@@ -625,6 +635,7 @@ const CodeRunner = e(x => {
     })
     codeMirrors.set(codeAreaRef, cm)
     return () => {
+      console.log('cleanup')
       codeMirrors.delete(codeAreaRef)
     }
   }, [])
@@ -699,7 +710,7 @@ const x = {
           SC('functions'), 'from right to left, see', SLink(TRANDUCERS_URL, ['transducers']),
         ],
         [SC('y'), 'is the output of running', SC('x'), 'through the chain of', SC('functions')],
-        [SC('y'), 'is wrapped in a Promise if any of the following are true'],
+        [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
           ['any function of', SC('functions'), 'is asynchronous'],
         ])],
@@ -728,6 +739,46 @@ ABCPromise.then(console.log)
 `.trimStart(),
         })],
       ],
+    },
+    fork: {
+      example: 'y = fork(functions)(x)',
+      description: 'duplicate and diverge flow ⛓️',
+      rules: [
+        [SC('functions'), 'is an array of functions or an object of functions'],
+        ['all functions of', SC('functions'), 'are run concurrently'],
+        [SC('x'), 'is anything'],
+        [
+          SC('y'), 'is the', SC('functions'),
+          '-shaped product of applying each function to', SC('x'),
+        ],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          ['any function of', SC('functions'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const greet = whom => greeting => greeting + ' ' + whom
+
+const asyncGreet = whom => async greeting => greeting + ' ' + whom
+
+const arrayOfHellos = fork([
+  greet('world'), // 'hello' => 'hello world'
+  greet('mom'), // 'hello' => 'hello mom'
+])('hello')
+
+console.log('arrayOfHellos', arrayOfHellos)
+
+const objectOfHellosPromise = fork({
+  toWorld: greet('world'),
+  toMom: greet('mom'),
+  toAsync: asyncGreet('async'),
+})('good morning')
+
+objectOfHellosPromise.then(x => console.log('objectOfHellosPromise', x))
+`.trimStart(),
+        })],
+      ],
+      methods: [],
     },
   },
 }
