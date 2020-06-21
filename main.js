@@ -86,7 +86,7 @@ const Divz = e(x => Div(null, [
   Div(),
 ]))
 
-const RUBICO_LINK_COLOR = 'royalblue'
+const RUBICO_LINK_COLOR = 'darkslategrey'
 
 const RubicoAPIHomeLink = e(x => {
   return Div(null, [
@@ -218,7 +218,7 @@ const RubicoAPIMethod = e(x => Div(null, [
       padding: '.5em',
       width: '85%',
       fontFamily: 'monospace',
-      fontSize: '1.25em',
+      // fontSize: '1.25em',
     },
   }, [x.method && x.method.example])]),
   Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.method ? x.method.rules : [])]),
@@ -265,8 +265,6 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       zIndex: 1,
       width: x.path ? '125%' : '100%',
       height: '100%',
-      transform: x.path ? 'scale(.9, .9) translate(-6%, -6%)' : '',
-      transition: 'transform .38s, width: 2s',
     },
   }, [
     Section(null, [
@@ -609,70 +607,73 @@ const transformCodeToIFrameSrc = pipe([
   htmlString => `data:text/html;charset=utf-8,${encodeURI(htmlString)}`,
 ])
 
-const CodeRunner = (() => {
-  let getCode = () => {}
-  return e(x => {
-    const codeAreaRef = useRef(null)
-    const outputAreaRef = useRef(null)
-    const [outputAreaSrc, setOutputAreaSrc] = useState(null)
-    useEffect(() => {
-      const cm = CodeMirror(codeAreaRef.current, {
-        value: x.code,
-        mode: 'javascript',
-        lineWrapping: true,
-        lineNumbers: true,
-        theme: 'default',
-      })
-      getCode = () => cm.getValue()
-    }, [])
-    return Div(null, [
-      Div({ ref: codeAreaRef }),
-      Div({
+const codeMirrors = new Map()
+
+// goal: make code mirror work in react
+const CodeRunner = e(x => {
+  const codeAreaRef = useRef(null)
+  const outputAreaRef = useRef(null)
+  const [outputAreaSrc, setOutputAreaSrc] = useState(null)
+  useEffect(() => {
+    const cm = CodeMirror(codeAreaRef.current, {
+      value: x.code,
+      mode: 'javascript',
+      lineWrapping: true,
+      lineNumbers: true,
+      theme: 'default',
+    })
+    codeMirrors.set(codeAreaRef, cm)
+    return () => {
+      codeMirrors.delete(codeAreaRef)
+    }
+  }, [])
+  return Div(null, [
+    Div({ ref: codeAreaRef }),
+    Div({
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '3em 1em auto',
+        height: '10em',
+      },
+    }, [
+      Button({
         style: {
-          display: 'grid',
-          gridTemplateColumns: '3em 1em auto',
-          height: '10em',
+          padding: '.25em .75em',
+          borderRadius: '2px',
+          cursor: 'pointer',
+          height: '2em',
         },
-      }, [
-        Button({
-          style: {
-            padding: '.25em .75em',
-            borderRadius: '2px',
-            cursor: 'pointer',
-            height: '2em',
+        onClick: pipe([
+          () => codeMirrors.get(codeAreaRef).getValue(),
+          transformCodeToIFrameSrc,
+          iframeSrc => {
+            setOutputAreaSrc(iframeSrc)
           },
-          onClick: pipe([
-            () => getCode(),
-            transformCodeToIFrameSrc,
-            iframeSrc => {
-              setOutputAreaSrc(iframeSrc)
-            },
-          ]),
-        }, ['run']),
-        Span({
-          style: {
-            visibility: outputAreaSrc ? 'visible' : 'hidden',
-            color: '#3f72fc',
-            fontSize: '.80em',
-            fontWeight: '625',
-            position: 'relative',
-            right: '-0.75em',
-            bottom: '-0.65em',
-          },
-        }, [' >']),
-        Iframe({
-          style: {
-            visibility: outputAreaSrc ? 'visible' : 'hidden',
-            height: '10em',
-            position: 'relative',
-            bottom: '-0.05em',
-          },
-          src: outputAreaSrc,
-        }),
-      ]),
-    ])
-  })
-})()
+        ]),
+      }, ['run']),
+      Span({
+        style: {
+          visibility: outputAreaSrc ? 'visible' : 'hidden',
+          color: '#3f72fc',
+          fontSize: '.80em',
+          fontWeight: '625',
+          position: 'relative',
+          right: '-0.75em',
+          bottom: '-0.65em',
+        },
+      }, [' >']),
+      Iframe({
+        style: {
+          visibility: outputAreaSrc ? 'visible' : 'hidden',
+          height: '10em',
+          position: 'relative',
+          bottom: '-0.05em',
+        },
+        src: outputAreaSrc,
+      }),
+    ]),
+  ])
+})
 
 const TRANDUCERS_URL = 'https://github.com/a-synchronous/rubico#transducers'
 
