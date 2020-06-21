@@ -263,7 +263,8 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       backgroundColor: 'white',
       position: 'relative',
       zIndex: 1,
-      width: x.path ? '125%' : '100%',
+      // width: x.path ? '110%' : '100%',
+      width: '100%',
       height: '100%',
     },
   }, [
@@ -272,7 +273,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       RubicoAPIMethodLinkList(x, [
         RubicoAPIMethodLink({
           name: 'pipe',
-          description: 'define flow, chain functions together 🔗',
+          description: 'chain functions together, define flow 🔗',
         })(x),
         RubicoAPIMethodLink({
           name: 'fork',
@@ -689,7 +690,7 @@ const x = {
   methods: {
     pipe: {
       example: 'y = pipe(functions)(x)',
-      description: 'define flow, chain functions together 🔗',
+      description: 'chain functions together, define flow 🔗',
       rules: [
         [SC('functions'), 'is an array of functions'],
         [SC('x'), 'is anything'],
@@ -704,11 +705,27 @@ const x = {
         ])],
         [CodeRunner({
           code: `
-console.log('hey')
-console.log('hey')
-console.log('hey')
-console.log('hey')
-          `.trimStart(),
+const appendA = x => x + 'A'
+
+const asyncAppendB = async x => x + 'B'
+
+const appendC = x => x + 'C'
+
+const AC = pipe([
+  appendA, // '' => 'A'
+  appendC, // 'A' => 'AC'
+])('')
+
+console.log(AC)
+
+const ABCPromise = pipe([
+  appendA, // '' => 'A'
+  asyncAppendB, // 'AB' => Promise { 'ABC' }
+  appendC, // 'A' => 'AB'
+])('')
+
+ABCPromise.then(console.log)
+`.trimStart(),
         })],
       ],
     },
