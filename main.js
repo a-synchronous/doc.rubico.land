@@ -467,10 +467,8 @@ const SList = children => Ul({
 
 const templateCodeSandbox = code => `
 Promise.all([
-  fetch('https://unpkg.com/rubico@1/index.js').then(res => res.text()),
-]).then(texts => {
-  texts.forEach(text => { Function(text)() })
-
+  import('https://unpkg.com/rubico@1/index.js'),
+]).then(() => {
   const {
     pipe, fork, assign,
     tap, tryCatch, switchCase,
