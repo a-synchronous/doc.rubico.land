@@ -635,7 +635,6 @@ const CodeRunner = e(x => {
     })
     codeMirrors.set(codeAreaRef, cm)
     return () => {
-      console.log('cleanup')
       codeMirrors.delete(codeAreaRef)
     }
   }, [])
@@ -769,9 +768,9 @@ const arrayOfHellos = fork([
 console.log('arrayOfHellos', arrayOfHellos)
 
 const objectOfHellosPromise = fork({
-  toWorld: greet('world'),
-  toMom: greet('mom'),
-  toAsync: asyncGreet('async'),
+  toWorld: greet('world'), // 'good morning' => 'good morning world'
+  toMom: greet('mom'), // 'good morning' => 'good morning mom'
+  toAsync: asyncGreet('async'), // 'good morning' => Promise { 'good morning async' }
 })('good morning')
 
 objectOfHellosPromise.then(x => console.log('objectOfHellosPromise', x))
