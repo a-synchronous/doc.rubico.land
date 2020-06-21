@@ -5,7 +5,12 @@ body {
 }
 
 h1 {
-  font-size: 2em;
+  /* font-size: 2em; */
+}
+
+code {
+  font-size: 1.15em;
+  color: blue;
 }
 
 b, a {
@@ -16,8 +21,19 @@ p {
   font-size: 1em;
 }
 
+textarea {
+  /* font-size: 1.15em; */
+}
+
+iframe {
+  /* pointer-events: none; */
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
 ul {
-  padding-inline-start: 1em;
+  padding-inline-start: 0em;
 }
 
 img {

@@ -15,7 +15,7 @@ const {
   get, pick, omit,
 } = rubico
 
-const { createElement, useState, useEffect, useReducer, useRef } = React
+const { createElement, useState, useEffect, useReducer, useRef, useCallback } = React
 
 const render = (container, component) => ReactDOM.render(component, container)
 
@@ -50,6 +50,7 @@ const B = e('b')
 const I = e('i')
 const Ul = e('ul')
 const Li = e('li')
+const Textarea = e('textarea')
 const Button = e('button')
 const Iframe = e('iframe')
 const Br = e('br')
@@ -85,6 +86,8 @@ const Divz = e(x => Div(null, [
   Div(),
 ]))
 
+const RUBICO_LINK_COLOR = 'royalblue'
+
 const RubicoAPIHomeLink = e(x => {
   return Div(null, [
     Button({
@@ -99,7 +102,7 @@ const RubicoAPIHomeLink = e(x => {
       onClick: () => { x.gotoHome() },
     }, [
       H1({
-        style: { color: 'black' },
+        style: { color: RUBICO_LINK_COLOR },
       }, ['🏞 rubico ']),
     ]),
   ])
@@ -116,11 +119,13 @@ const RubicoAPIMethodLinkList = e(x => x.path ? Ul({
     flexWrap: 'wrap',
     margin: 0,
     transition: 'margin .5s',
+    paddingInlineStart: '1em',
   },
 }, [x.children]) : Ul({
   style: {
     margin: '1em 0em',
     transition: 'margin .5s',
+    paddingInlineStart: '1em',
   },
 }, [x.children]))
 
@@ -145,7 +150,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
       onClick: () => { x.goto(name) },
     }, [
       H2({
-        style: { margin: '0 0', color: 'blue' },
+        style: { margin: '0 0', color: RUBICO_LINK_COLOR },
       }, [name]),
     ]),
     Div({
@@ -160,6 +165,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
         style: {
           marginLeft: '1em',
           display: x.path ? 'none' : 'block',
+          paddingInlineStart: '1em',
         },
       }, [x.children]),
     ]),
@@ -192,12 +198,12 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
   ])
 })
 
-const RubicoAPIMethodRule = children => Li({
+const RubicoAPIMethodRule = (children, i) => Li({
   style: {
     listStyle: 'none',
     margin: '1em 0em',
   },
-  key: children.map(x => `${x}`).join(''),
+  key: i,
 }, map(child => Span({
   style: { marginRight: '.35em' },
 }, [child]))(children))
@@ -215,7 +221,7 @@ const RubicoAPIMethod = e(x => Div(null, [
       fontSize: '1.25em',
     },
   }, [x.method && x.method.example])]),
-  Ul(null, [map(RubicoAPIMethodRule)(x.method ? x.method.rules : [])]),
+  Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.method ? x.method.rules : [])]),
 ]))
 
 const RubicoAPI = e(x => Div({
@@ -241,7 +247,9 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     P(null, [
       'The tags below denote the asynchronous behavior of a given method',
     ]),
-    Ul(null, [
+    Ul({
+      style: { paddingInlineStart: '1em' },
+    }, [
       Li({
         style: { listStyle: 'none' },
       }, ['🔗 - executes in series']),
@@ -469,16 +477,202 @@ const SLink = (url, name) => A({
 
 const toString = x => `${x}`
 
-const SListItem = children => Li({
+const SListItem = (children, i) => Li({
   style: { margin: '0' },
-  key: children.map(x => `${x}`).join(''),
+  key: i,
 }, map(child => Span({
   style: { marginRight: '.35em' },
 }, [child]))(children))
 
 const SList = children => Ul({
   style: { paddingInlineStart: '2em' },
-}, map(SListItem)(children))
+}, map.withIndex(SListItem)(children))
+
+const templateCodeSandbox = code => `
+Promise.all([
+  fetch('https://unpkg.com/rubico@1/index.js').then(res => res.text()),
+]).then(texts => {
+  texts.forEach(text => { Function(text)() })
+
+  const {
+    pipe, fork, assign,
+    tap, tryCatch, switchCase,
+    map, filter, reduce, transform,
+    any, all, and, or, not,
+    eq, gt, lt, gte, lte,
+    get, pick, omit,
+  } = rubico
+
+  const codeArea = document.createElement('code')
+  codeArea.style.fontSize = '1.25em'
+  const panel = document.createElement('pre')
+  codeArea.appendChild(panel)
+  document.body.appendChild(panel)
+
+  const isDefined = x => x !== null && x !== undefined
+
+  const isString = x => typeof x === 'string'
+
+  const isArray = Array.isArray
+
+  const is = fn => x => isDefined(x) && x.constructor === fn
+
+  const typedArrays = new Set([
+    'Uint8ClampedArray',
+    'Uint8Array', 'Int8Array',
+    'Uint16Array', 'Int16Array',
+    'Uint32Array', 'Int32Array',
+    'Float32Array', 'Float64Array',
+    'BigUint64Array', 'BigInt64Array',
+  ])
+
+  const isTypedArray = x => (isDefined(x) &&
+    x.constructor && typedArrays.has(x.constructor.name))
+
+  const fmt = (x, depth = 0) => {
+    if (depth > 0 && isString(x)) {
+      return "'" + x + "'"
+    }
+    if (isArray(x)) {
+      return '[' + map(xi => fmt(xi, depth + 1))(x).join(', ') + ']'
+    }
+    if (isTypedArray(x)) {
+      return x.constructor.name + '(' + x.length + ') [' + x.join(', ') + ']'
+    }
+    if (is(Object)(x)) {
+      let y = '{ '
+      const entries = []
+      for (const k in x) entries.push(k + ': ' + fmt(x[k], depth + 1))
+      y += entries.join(', ')
+      y += ' }'
+      return y
+    }
+    if (is(Set)(x)) {
+      return 'Set { ' + [...map(xi => fmt(xi, depth + 1))(x)].join(', ') + ' }'
+    }
+    if (is(Map)(x)) {
+      let y = 'Map { '
+      const entries = []
+      for (const [k, v] of x) entries.push(k + ' => ' + fmt(v, depth + 1))
+      y += entries.join(', ')
+      y += ' }'
+      return y
+    }
+    return x
+  }
+
+  const console = {
+    log: (...msgs) => {
+      panel.innerHTML += msgs.map(fmt).join(' ')
+      panel.innerHTML += '\\n'
+    },
+  }
+
+  const trace = tap(console.log)
+
+  try {
+    ${code}
+  } catch (e) {
+    console.log(e)
+  }
+})
+`.trim()
+
+// code => html_string_with_code
+const generateHTMLScript = code => {
+  const script = document.createElement('script')
+  script.innerHTML = templateCodeSandbox(code)
+  return script
+}
+
+// HTMLElement => HTMLDocument
+const renderIntoNewHTMLDoc = el => {
+  const html = document.createElement('html')
+  const body = document.createElement('body')
+  body.appendChild(el)
+  html.appendChild(body)
+  return html
+}
+
+// HTMLElement => html_string
+const htmlToString = el => {
+  const div = document.createElement('div')
+  div.appendChild(el)
+  return div.innerHTML
+}
+
+// code => iframeSrc
+const transformCodeToIFrameSrc = pipe([
+  generateHTMLScript,
+  renderIntoNewHTMLDoc,
+  htmlToString,
+  htmlString => `data:text/html;charset=utf-8,${encodeURI(htmlString)}`,
+])
+
+const CodeRunner = (() => {
+  let getCode = () => {}
+  return e(x => {
+    const codeAreaRef = useRef(null)
+    const outputAreaRef = useRef(null)
+    const [outputAreaSrc, setOutputAreaSrc] = useState(null)
+    useEffect(() => {
+      const cm = CodeMirror(codeAreaRef.current, {
+        value: x.code,
+        mode: 'javascript',
+        lineWrapping: true,
+        lineNumbers: true,
+        theme: 'default',
+      })
+      getCode = () => cm.getValue()
+    }, [])
+    return Div(null, [
+      Div({ ref: codeAreaRef }),
+      Div({
+        style: {
+          display: 'grid',
+          gridTemplateColumns: '3em 1em auto',
+          height: '10em',
+        },
+      }, [
+        Button({
+          style: {
+            padding: '.25em .75em',
+            borderRadius: '2px',
+            cursor: 'pointer',
+            height: '2em',
+          },
+          onClick: pipe([
+            () => getCode(),
+            transformCodeToIFrameSrc,
+            iframeSrc => {
+              setOutputAreaSrc(iframeSrc)
+            },
+          ]),
+        }, ['run']),
+        Span({
+          style: {
+            visibility: outputAreaSrc ? 'visible' : 'hidden',
+            color: '#3f72fc',
+            fontSize: '.80em',
+            fontWeight: '625',
+            position: 'relative',
+            right: '-0.75em',
+            bottom: '-0.65em',
+          },
+        }, [' >']),
+        Iframe({
+          style: {
+            visibility: outputAreaSrc ? 'visible' : 'hidden',
+            height: '10em',
+            position: 'relative',
+            bottom: '-0.05em',
+          },
+          src: outputAreaSrc,
+        }),
+      ]),
+    ])
+  })
+})()
 
 const TRANDUCERS_URL = 'https://github.com/a-synchronous/rubico#transducers'
 
@@ -507,6 +701,14 @@ const x = {
         [SList([
           ['any function of', SC('functions'), 'is asynchronous'],
         ])],
+        [CodeRunner({
+          code: `
+console.log('hey')
+console.log('hey')
+console.log('hey')
+console.log('hey')
+          `.trimStart(),
+        })],
       ],
     },
   },
