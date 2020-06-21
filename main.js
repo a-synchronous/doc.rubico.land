@@ -44,6 +44,7 @@ const H1 = e('h1')
 const H2 = e('h2')
 const H3 = e('h3')
 const H4 = e('h4')
+const A = e('a')
 const P = e('p')
 const B = e('b')
 const I = e('i')
@@ -52,6 +53,8 @@ const Li = e('li')
 const Button = e('button')
 const Iframe = e('iframe')
 const Br = e('br')
+const Code = e('code')
+const Pre = e('pre')
 
 const Clicker = e(x => {
   const { styles, assets, clickMessage } = x
@@ -188,6 +191,32 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
     }, [x.children]),
   ])
 })
+
+const RubicoAPIMethodRule = children => Li({
+  style: {
+    listStyle: 'none',
+    margin: '1em 0em',
+  },
+  key: children.map(x => `${x}`).join(''),
+}, map(child => Span({
+  style: { marginRight: '.35em' },
+}, [child]))(children))
+
+const RubicoAPIMethod = e(x => Div(null, [
+  H1(null, [x.path]),
+  P(null, [x.method && x.method.description]),
+  Code(null, [Pre({
+    style: {
+      backgroundColor: 'darkslategrey',
+      color: 'white',
+      padding: '.5em',
+      width: '85%',
+      fontFamily: 'monospace',
+      fontSize: '1.25em',
+    },
+  }, [x.method && x.method.example])]),
+  Ul(null, [map(RubicoAPIMethodRule)(x.method ? x.method.rules : [])]),
+]))
 
 const RubicoAPI = e(x => Div({
   style: { height: '100%' },
@@ -373,19 +402,9 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
       ]),
     ]),
     Br(),
-    x.path ? Section(null, [
-      Div({
-        style: {},
-      }, [
-        H1({
-          style: {},
-        }, [x.path]),
-      ]),
-    ]) : Div(),
+    x.path ? Section(null, [RubicoAPIMethod(x)]) : Div(),
   ]),
 ]))
-
-const RubicoAPIMethod = e(x => x.path ? Div() : Div())
 
 const NotFound = e(() => H1(null, ['not found']))
 
@@ -418,6 +437,7 @@ const Root = e(x => {
         setHash(methodName)
       },
       path: () => hash.startsWith('#') ? hash.slice(1) : hash,
+      method: x => x.methods[hash.startsWith('#') ? hash.slice(1) : hash],
     }),
     switchCase([
       or([
@@ -431,6 +451,37 @@ const Root = e(x => {
   ])(x)
 })
 
+const SC = code => Code({
+  style: {
+    backgroundColor: 'darkslategrey',
+    color: 'white',
+    padding: '.15em .35em',
+  },
+}, [code])
+
+const SB = name => B(null, [name])
+
+const SLink = (url, name) => A({
+  href: url,
+  style: {
+  },
+}, [name])
+
+const toString = x => `${x}`
+
+const SListItem = children => Li({
+  style: { margin: '0' },
+  key: children.map(x => `${x}`).join(''),
+}, map(child => Span({
+  style: { marginRight: '.35em' },
+}, [child]))(children))
+
+const SList = children => Ul({
+  style: { paddingInlineStart: '2em' },
+}, map(SListItem)(children))
+
+const TRANDUCERS_URL = 'https://github.com/a-synchronous/rubico#transducers'
+
 const x = {
   assets: {
     lolSrc: 'https://tour.rubico.land/assets/thank-you-michael-scott.gif',
@@ -440,6 +491,25 @@ const x = {
     div: { backgroundColor: 'pink' },
   },
   clickMessage: 'hey',
+  methods: {
+    pipe: {
+      example: 'y = pipe(functions)(x)',
+      description: 'define flow, chain functions together 🔗',
+      rules: [
+        [SC('functions'), 'is an array of functions'],
+        [SC('x'), 'is anything'],
+        [
+          'if', SC('x'), 'is a function,', SB('pipe'), 'chains',
+          SC('functions'), 'from right to left, see', SLink(TRANDUCERS_URL, ['transducers']),
+        ],
+        [SC('y'), 'is the output of running', SC('x'), 'through the chain of', SC('functions')],
+        [SC('y'), 'is wrapped in a Promise if any of the following are true'],
+        [SList([
+          ['any function of', SC('functions'), 'is asynchronous'],
+        ])],
+      ],
+    },
+  },
 }
 
 render(document.getElementById('root'), Root(x))
