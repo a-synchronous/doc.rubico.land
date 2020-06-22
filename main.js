@@ -359,13 +359,17 @@ const RubicoAPIMethod = e(x => {
   return Div({
     id: 'anchor',
     style: {
-      padding: '2em 0em',
       position: 'relative',
       zIndex: 1,
       width: '100%',
     },
   }, [
-    H1(null, [x.name]),
+    H1({ style: {
+      padding: '2em 0em 0em',
+      margin: 0,
+      backgroundColor: BACKGROUND_COLOR,
+      position: 'relative',
+    } }, [x.name]),
     P(null, [x.description]),
     Code(null, [Pre({
       style: {
@@ -475,7 +479,8 @@ const RubicoAPI = e(x => Div({
   }, [
     P({
       style: {
-        fontSize: '0.8em',
+        fontSize: '.9em',
+        breakWord: 'auto',
         paddingInlineStart: '3em',
       },
     }, [I(null, ['a shallow river in northeastern Italy, just south of Ravenna'])]),
@@ -1061,7 +1066,38 @@ console.log(errorThrower('hello'))
       description: 'control flow 🔗',
       prev: 'tryCatch',
       next: 'map',
-      rules: [],
+      rules: [
+        [SC('functions'), 'is an array of functions', SC('[if1, do1, if2, do2, ..., ifN, doN, elseDo]')],
+        [SList([
+          [
+            SC('if1, if2, ..., ifN'),
+            'are predicate functions corresponding to do functions',
+            SC('do1, do2, ..., doN'),
+          ],
+          [SC('elseDo'), 'is a do function'],
+          [SC('functions'), 'is at minimum', SC('[if1, do1, elseDo]')],
+        ])],
+        [SC('x'), 'is anything'],
+        [
+          SC('y'), 'is', SC('doN(x)'), 'where the corresponding',
+          SC('ifN(x)'), 'is the first truthful predicate, or',
+          SC('elseDo(x)'), 'on no truthy predicates',
+        ],
+        [CodeRunner({
+          code: `
+const isOdd = x => x % 2 === 1
+
+const evenOrOdd = switchCase([
+  isOdd, () => 'odd',
+  async () => 'even',
+])
+
+console.log(evenOrOdd(1))
+
+evenOrOdd(2).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
   },
 }
