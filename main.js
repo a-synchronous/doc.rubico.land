@@ -390,7 +390,9 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     ]),
   ]),
   RubicoAPIMethods(x),
-  x.path ? Section(null, [RubicoAPIMethod(x.method)]) : Div(),
+  Section({
+    style: { display: x.path ? 'block' : 'none' },
+  }, [RubicoAPIMethod(x.method)]),
 ]))
 
 const NotFound = e(() => H1(null, ['not found']))
@@ -404,10 +406,23 @@ const rubicoAPIMethods = new Set([
   'get', 'pick', 'omit',
 ])
 
+const cleanHash = hash => hash.startsWith('#') ? hash.slice(1) : hash
+
 const Root = e(x => {
-  const [hash, setHash] = useState(location.hash)
+  const [{ hash, prevHash }, dispatch] = useReducer(
+    (state, action) => switchCase([
+      eq('GOTO', get('type')), action => ({
+        hash: action.hash,
+        prevHash: state.hash,
+      }),
+      () => state,
+    ])(action),
+    { hash: cleanHash(location.hash), prevHash: '' },
+  )
   useEffect(() => {
-    const setLocationHash = () => { setHash(location.hash) }
+    const setLocationHash = () => {
+      dispatch({ type: 'GOTO', hash: cleanHash(location.hash) })
+    }
     window.addEventListener('popstate', setLocationHash)
     return () => {
       window.removeEventListener('popstate', setLocationHash)
@@ -417,14 +432,15 @@ const Root = e(x => {
     assign({
       gotoHome: () => () => {
         history.pushState({}, '', '/')
-        setHash('')
+        dispatch({ type: 'GOTO', hash: '' })
       },
       goto: () => methodName => {
         history.pushState({ path: methodName }, '', '#' + methodName)
-        setHash(methodName)
+        dispatch({ type: 'GOTO', hash: methodName })
       },
-      path: () => hash.startsWith('#') ? hash.slice(1) : hash,
-      method: x => x.methods[hash.startsWith('#') ? hash.slice(1) : hash],
+      path: () => hash,
+      prevPath: () => prevHash,
+      method: get(['methods', hash]),
     }),
     switchCase([
       or([
