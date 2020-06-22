@@ -330,28 +330,30 @@ const RubicoAPIMethodRule = (children, i) => Li({
   style: { marginRight: '.35em' },
 }, [child]))(children))
 
-const RubicoAPIMethod = e(x => Div({
-  style: {
-    padding: '2em 0em',
-    backgroundColor: 'white',
-    position: 'relative',
-    zIndex: 1,
-    width: '100%',
-  },
-}, [
-  H1(null, [x.name]),
-  P(null, [x.description]),
-  Code(null, [Pre({
+const RubicoAPIMethod = e(x => {
+  return Div({
     style: {
-      backgroundColor: 'darkslategrey',
-      color: 'white',
-      padding: '.5em',
-      width: '85%',
-      fontFamily: 'monospace',
+      padding: '2em 0em',
+      backgroundColor: 'white',
+      position: 'relative',
+      zIndex: 1,
+      width: '100%',
     },
-  }, [x.signature])]),
-  Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.rules || [])]),
-]))
+  }, [
+    H1(null, [x.name]),
+    P(null, [x.description]),
+    Code(null, [Pre({
+      style: {
+        backgroundColor: 'darkslategrey',
+        color: 'white',
+        padding: '.5em',
+        width: '85%',
+        fontFamily: 'monospace',
+      },
+    }, [x.signature])]),
+    Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.rules || [])]),
+  ])
+})
 
 const RubicoAPI = e(x => Div({
   style: { height: '100%' },
@@ -701,11 +703,11 @@ console.log(AC)
 
 const ABCPromise = pipe([
   appendA, // '' => 'A'
-  asyncAppendB, // 'AB' => Promise { 'ABC' }
-  appendC, // 'A' => 'AB'
+  asyncAppendB, // 'A' => Promise { 'AB' }
+  appendC, // 'AB' => 'ABC'
 ])('')
 
-ABCPromise.then(console.log)
+ABCPromise.then(ABC => console.log(ABC))
 `.trimStart(),
         })],
       ],
@@ -737,15 +739,15 @@ const arrayOfHellos = fork([
   greet('mom'), // 'hello' => 'hello mom'
 ])('hello')
 
-console.log('arrayOfHellos', arrayOfHellos)
+console.log(arrayOfHellos)
 
 const objectOfHellosPromise = fork({
-  toWorld: greet('world'), // 'good morning' => 'good morning world'
-  toMom: greet('mom'), // 'good morning' => 'good morning mom'
-  toAsync: asyncGreet('async'), // 'good morning' => Promise { 'good morning async' }
-})('good morning')
+  toWorld: greet('world'), // 'hello => 'hello world'
+  toMom: greet('mom'), // 'hello => 'hello mom'
+  toAsync: asyncGreet('async'), // 'hello => Promise { 'hello async' }
+})('hello')
 
-objectOfHellosPromise.then(x => console.log('objectOfHellosPromise', x))
+objectOfHellosPromise.then(objectOfHellos => console.log(objectOfHellos))
 `.trimStart(),
         })],
       ],
