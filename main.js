@@ -721,7 +721,7 @@ Promise.all([
     },
   }
 
-  const trace = tap(console.log)
+  trace = tap(console.log)
 
   try {
     ${code}
@@ -976,11 +976,53 @@ asyncPutValues({ a: 1, b: 2, c: 3 }).then(console.log)
     },
     tap: {
       name: 'tap',
-      signature: 'y = tap(functions)(x)',
+      signature: 'y = tap(f)(x)',
       description: 'spy on flow',
       prev: 'assign',
       next: 'tryCatch',
-      rules: [],
+      rules: [
+        [SC('f'), 'is a function'],
+        [SC('x'), 'is anything'],
+        [SC('y'), 'is', SC('x')],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const trace = tap(console.log)
+
+pipe([
+  trace,
+  x => x + 'bar',
+  trace,
+])('foo')
+`.trimStart(),
+        })],
+      ],
+      methods: [
+        {
+          name: 'tap (transducing)',
+          signature: 'tapReducer = tap(f)(reducer)',
+          description: 'tap for transducer pipelines',
+          rules: [
+            [SC('f'), 'is a function'],
+            [SC('reducer'), 'is a reducer function'],
+            [SC('tapReducer'), 'is a reducer function with', SB('tap'), 'functionality'],
+            [CodeRunner({
+              code: `
+const trace = tap(console.log)
+
+const add = (a, b) => a + b
+
+const sum = [1, 2, 3].reduce(trace(add), 0)
+
+console.log(sum)
+`.trimStart(),
+            })],
+          ],
+        },
+      ],
     },
     tryCatch: {
       name: 'tryCatch',
