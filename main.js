@@ -523,12 +523,6 @@ const RubicoAPI = e(x => Div({
       goto: x.goto,
     })
   ]),
-  Section(null, [
-    Br(), Br(),
-    P({
-      style: { fontSize: '.8em', color: 'slategrey' },
-    }, ['(c) 2020 Richard Tong. MIT Licensed']),
-  ]),
 ]))
 
 const NotFound = e(() => H1(null, ['not found']))
