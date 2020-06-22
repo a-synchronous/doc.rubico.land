@@ -339,7 +339,6 @@ const RubicoAPIMethods = e(x => Div({
       })(x),
     ]),
   ]),
-  Section({ style: { minHeight: '20em' } }),
 ]))
 
 const RubicoAPIMethodRule = (children, i) => Li({
@@ -354,6 +353,7 @@ const RubicoAPIMethodRule = (children, i) => Li({
 
 const RubicoAPIMethod = e(x => {
   return Div({
+    id: 'anchor',
     style: {
       padding: '2em 0em',
       position: 'relative',
@@ -371,6 +371,61 @@ const RubicoAPIMethod = e(x => {
       },
     }, [x.signature])]),
     Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.rules || [])]),
+    Div({
+      style: {
+        display: 'flex',
+        justifyContent: 'center',
+      },
+    }, [
+      Button({
+        style: {
+          visibility: x.prev ? 'visible' : 'hidden',
+          backgroundColor: 'inherit',
+          border: 'none',
+          outline: 'none',
+          cursor: 'pointer',
+          margin: '.25em 0',
+          padding: '0 0',
+        },
+        onClick: () => { x.goto(x.prev) },
+      }, [
+        H1({
+          style: {
+            margin: '0 0',
+            color: RUBICO_METHOD_COLOR,
+            fontSize: '3em',
+          },
+        }, [x.prev]),
+      ]),
+      H1({
+        style: {
+          color: 'black',
+          margin: '1em .5em',
+          lineHeight: '1em',
+          fontSize: '2.5em',
+        },
+      }, [x.name]),
+      Button({
+        style: {
+          visibility: x.next ? 'visible' : 'hidden',
+          backgroundColor: 'inherit',
+          border: 'none',
+          outline: 'none',
+          cursor: 'pointer',
+          margin: '.25em 0',
+          padding: '0 0',
+        },
+        onClick: () => { x.goto(x.next) },
+      }, [
+        H1({
+          style: {
+            margin: '0 0',
+            color: RUBICO_METHOD_COLOR,
+            fontSize: '3em',
+          },
+        }, [x.next]),
+      ]),
+    ]),
   ])
 })
 
@@ -420,7 +475,6 @@ const RubicoAPI = e(x => Div({
     style: {
       position: 'relative',
       zIndex: 1,
-      top: '-20em',
       ...x.path && x.prevPath && x.isTransitioning ? ({
         display: 'block',
         opacity: 0,
@@ -437,7 +491,21 @@ const RubicoAPI = e(x => Div({
         display: 'none',
       }),
     },
-  }, [RubicoAPIMethod(x.isTransitioning ? x.methods[x.prevPath] : x.method)]),
+  }, [
+    RubicoAPIMethod({
+      ...x.isTransitioning ? x.methods[x.prevPath] : x.method,
+      goto: x.goto,
+    })
+  ]),
+  Section({
+    style: {
+      backgroundColor: 'pink',
+    },
+  }, [
+    Br(),
+    Br(),
+    Br(),
+  ]),
 ]))
 
 const NotFound = e(() => H1(null, ['not found']))
@@ -499,6 +567,9 @@ const Root = e(x => {
         dispatch({ type: 'GOTO', hash: '' })
       },
       goto: () => methodName => {
+        document.getElementById('anchor').scrollIntoView({
+          behavior: 'smooth',
+        })
         history.pushState({ path: methodName }, '', '#' + methodName)
         dispatch({ type: 'GOTO', hash: methodName })
       },
@@ -512,7 +583,9 @@ const Root = e(x => {
         eq('', hash),
         x => rubicoAPIMethods.has(x.path),
       ]), x => Div({
-        style: { display: 'grid' }, // TODO: figure out why this has to be here
+        style: {
+          display: 'grid',
+        }, // TODO: figure out why this has to be here
       }, [RubicoAPI(x)]),
       NotFound,
     ]),
@@ -753,6 +826,7 @@ const x = {
       name: 'pipe',
       signature: 'y = pipe(functions)(x)',
       description: 'chain functions together, define flow 🔗',
+      next: 'fork',
       rules: [
         [SC('functions'), 'is an array of functions'],
         [SC('x'), 'is anything'],
@@ -795,6 +869,8 @@ ABCPromise.then(ABC => console.log(ABC))
       name: 'fork',
       signature: 'y = fork(functions)(x)',
       description: 'duplicate and diverge flow ⛓️',
+      prev: 'pipe',
+      next: 'assign',
       rules: [
         [SC('functions'), 'is an array of functions or an object of functions'],
         ['all functions of', SC('functions'), 'are run concurrently'],
