@@ -229,11 +229,11 @@ const RubicoAPIMethods = e(x => Div({
       })(x),
       RubicoAPIMethodLink({
         name: 'tryCatch',
-        description: 'try a flow, catch with another 🔗',
+        description: 'try a function, catch with another 🔗',
       })(x),
       RubicoAPIMethodLink({
         name: 'switchCase',
-        description: 'logically control flow 🔗',
+        description: 'control flow 🔗',
       })(x),
     ]),
   ]),
@@ -851,7 +851,7 @@ const x = {
     pipe: {
       name: 'pipe',
       signature: 'y = pipe(functions)(x)',
-      description: 'chain functions together, define flow 🔗',
+      description: 'define flow: chain functions together 🔗',
       next: 'fork',
       rules: [
         [SC('functions'), 'is an array of functions'],
@@ -868,25 +868,23 @@ const x = {
         [CodeRunner({
           code: `
 const addA = x => x + 'A'
-
 const asyncAddB = async x => x + 'B'
-
 const addC = x => x + 'C'
 
-const AC = pipe([
+const addAC = pipe([
   addA, // '' => 'A'
   addC, // 'A' => 'AC'
-])('')
+])
 
-console.log(AC)
+console.log(addAC(''))
 
-const ABCPromise = pipe([
+const asyncAddABC = pipe([
   addA, // '' => 'A'
   asyncAddB, // 'A' => Promise { 'AB' }
-  addC, // 'AB' => 'ABC'
-])('')
+  addC, // Promise { 'AB' } => Promise { 'ABC' }
+])
 
-ABCPromise.then(ABC => console.log(ABC))
+asyncAddABC('').then(console.log)
 `.trimStart(),
         })],
       ],
@@ -913,22 +911,20 @@ ABCPromise.then(ABC => console.log(ABC))
           code: `
 const greet = whom => greeting => greeting + ' ' + whom
 
-const asyncGreet = whom => async greeting => greeting + ' ' + whom
-
-const helloArray = fork([
+const greetAll = fork([
   greet('world'), // 'hello' => 'hello world'
   greet('mom'), // 'hello' => 'hello mom'
-])('hello')
+])
 
-console.log(helloArray)
+console.log(greetAll('hello'))
 
-const helloObjectPromise = fork({
+const asyncGreetAll = fork({
   toWorld: greet('world'), // 'hello => 'hello world'
   toMom: greet('mom'), // 'hello => 'hello mom'
-  toAsync: asyncGreet('async'), // 'hello => Promise { 'hello async' }
-})('hello')
+  toAsync: async x => greet('async')(x), // 'hello => Promise { 'hello async' }
+})
 
-helloObjectPromise.then(helloObject => console.log(helloObject))
+asyncGreetAll('hello').then(console.log)
 `.trimStart(),
         })],
       ],
@@ -963,15 +959,44 @@ helloObjectPromise.then(helloObject => console.log(helloObject))
         ])],
         [CodeRunner({
           code: `
-const add = (a, b) => a + b
-
-const putTotal = assign({
-  sum: x => x.values.reduce(add),
+const putKeys = assign({
+  keys: Object.keys,
 })
 
+console.log(putKeys({ a: 1, b: 2, c: 3 }))
+
+const asyncPutValues = assign({
+  values: async x => Object.values(x),
+})
+
+asyncPutValues({ a: 1, b: 2, c: 3 }).then(console.log)
 `.trimStart(),
         })],
       ],
+    },
+    tap: {
+      name: 'tap',
+      signature: 'y = tap(functions)(x)',
+      description: 'spy on flow',
+      prev: 'assign',
+      next: 'tryCatch',
+      rules: [],
+    },
+    tryCatch: {
+      name: 'tryCatch',
+      signature: 'y = tryCatch(tryer, catcher)(x)',
+      description: 'try a function, catch with another 🔗',
+      prev: 'tap',
+      next: 'switchCase',
+      rules: [],
+    },
+    switchCase: {
+      name: 'switchCase',
+      signature: 'y = switchCase(functions)(x)',
+      description: 'control flow 🔗',
+      prev: 'tryCatch',
+      next: 'map',
+      rules: [],
     },
   },
 }
