@@ -495,6 +495,7 @@ const RubicoAPI = e(x => Div({
       }, ['⛓️  - executes in parallel']),
     ]),
   ]),
+  Br(), Br(),
   RubicoAPIMethods(x),
   Section({
     style: {
@@ -522,14 +523,11 @@ const RubicoAPI = e(x => Div({
       goto: x.goto,
     })
   ]),
-  Section({
-    style: {
-      backgroundColor: 'pink',
-    },
-  }, [
-    Br(),
-    Br(),
-    Br(),
+  Section(null, [
+    Br(), Br(),
+    P({
+      style: { fontSize: '.8em', color: 'slategrey' },
+    }, ['(c) 2020 Richard Tong. MIT Licensed']),
   ]),
 ]))
 
