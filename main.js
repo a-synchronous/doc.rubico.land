@@ -385,7 +385,9 @@ const RubicoAPIMethod = e(x => {
         xi => Div({ key: xi.i }, [RubicoAPIMethod(xi)]),
       ]))(x.methods || []),
     ]),
-    Div({ style: { display: 'flex', justifyContent: 'center' } }, [
+    Div({
+      style: { display: 'flex', justifyContent: 'center', flexWrap: 'wrap' },
+    }, [
       Button({
         style: {
           visibility: x.prev ? 'visible' : 'hidden',
@@ -403,42 +405,53 @@ const RubicoAPIMethod = e(x => {
             margin: '0 0',
             color: RUBICO_METHOD_COLOR,
             fontSize: '3em',
+            fontWeight: 700,
+            display: 'grid',
+            gridTemplateColumns: 'auto auto',
+            gridGap: '.35em',
           },
-        }, [x.prev, ' < ']),
+        }, [Span(null, [x.prev]), Span(null, [' < '])]),
       ]),
-      H1({
+      Div({
         style: {
-          visibility: x.prev ? 'visible' : 'hidden',
-          margin: '0 0',
-          color: 'black',
-          fontSize: '3em',
-          fontWeight: 700,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
+          display: 'grid',
+          gridTemplateColumns: '10% auto 10%',
         },
-      }, ['<']),
-      H1({
-        style: {
-          display: typeof x.i === 'undefined' ? 'block' : 'none',
-          color: 'black',
-          margin: '1em .5em',
-          lineHeight: '1em',
-          fontSize: '2.5em',
-        },
-      }, [x.name]),
-      H1({
-        style: {
-          visibility: x.next ? 'visible' : 'hidden',
-          margin: '0 0',
-          color: 'black',
-          fontSize: '3em',
-          fontWeight: 700,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        },
-      }, ['>']),
+      }, [
+        H1({
+          style: {
+            visibility: x.prev ? 'visible' : 'hidden',
+            margin: '0 0',
+            color: 'black',
+            fontSize: '3em',
+            fontWeight: 700,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          },
+        }, ['<']),
+        H1({
+          style: {
+            display: typeof x.i === 'undefined' ? 'block' : 'none',
+            color: 'black',
+            margin: '1em .5em',
+            lineHeight: '1em',
+            fontSize: '2.5em',
+          },
+        }, [x.name]),
+        H1({
+          style: {
+            visibility: x.next ? 'visible' : 'hidden',
+            margin: '0 0',
+            color: 'black',
+            fontSize: '3em',
+            fontWeight: 700,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          },
+        }, ['>']),
+      ]),
       Button({
         style: {
           visibility: x.next ? 'visible' : 'hidden',
@@ -457,8 +470,11 @@ const RubicoAPIMethod = e(x => {
             color: RUBICO_METHOD_COLOR,
             fontSize: '3em',
             fontWeight: 700,
+            display: 'grid',
+            gridTemplateColumns: 'auto auto',
+            gridGap: '.35em',
           },
-        }, ['> ', x.next]),
+        }, [Span({ style: { marginLeft: '.1em' } }, [' > ']), Span(null, [x.next])]),
       ]),
     ]),
   ])
