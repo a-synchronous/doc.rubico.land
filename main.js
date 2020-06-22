@@ -57,13 +57,16 @@ const Br = e('br')
 const Code = e('code')
 const Pre = e('pre')
 
-const RUBICO_LINK_COLOR = 'darkslategrey'
+const BACKGROUND_COLOR = 'aliceblue'
+const RUBICO_TITLE_COLOR = 'steelblue'
+const RUBICO_HEADING_COLOR = 'darkslategrey'
+const RUBICO_METHOD_COLOR = 'steelblue'
 
 const RubicoAPIHomeLink = e(x => {
   return Div(null, [
     Button({
       style: {
-        backgroundColor: 'white',
+        backgroundColor: BACKGROUND_COLOR,
         border: 'none',
         outline: 'none',
         cursor: 'pointer',
@@ -73,14 +76,20 @@ const RubicoAPIHomeLink = e(x => {
       onClick: () => { x.gotoHome() },
     }, [
       H1({
-        style: { color: RUBICO_LINK_COLOR },
+        style: {
+          color: RUBICO_TITLE_COLOR,
+          fontSize: '2.25em',
+        },
       }, ['🏞 rubico ']),
     ]),
   ])
 })
 
 const RubicoAPIMethodHeader = heading => e(x => H2({
-  style: { margin: x.path ? '0' : '0em auto' },
+  style: {
+    color: RUBICO_HEADING_COLOR,
+    margin: x.path ? '0' : '0em auto',
+  },
 }, [heading]))
 
 const RubicoAPIMethodLinkList = e(x => x.path ? Ul({
@@ -111,7 +120,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   }, [
     Button({
       style: {
-        backgroundColor: 'white',
+        backgroundColor: BACKGROUND_COLOR,
         border: 'none',
         outline: 'none',
         cursor: 'pointer',
@@ -121,7 +130,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
       onClick: () => { x.goto(name) },
     }, [
       H2({
-        style: { margin: '0 0', color: RUBICO_LINK_COLOR },
+        style: { margin: '0 0', color: RUBICO_METHOD_COLOR },
       }, [name]),
     ]),
     Div({
@@ -147,7 +156,7 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
   return Li(null, [
     Button({
       style: {
-        backgroundColor: 'white',
+        backgroundColor: BACKGROUND_COLOR,
         border: 'none',
         outline: 'none',
         cursor: 'text',
@@ -171,7 +180,7 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
 
 const RubicoAPIMethods = e(x => Div({
   style: {
-    backgroundColor: 'white',
+    backgroundColor: BACKGROUND_COLOR,
     position: 'relative',
     zIndex: 1,
     width: '100%',
@@ -334,7 +343,7 @@ const RubicoAPIMethod = e(x => {
   return Div({
     style: {
       padding: '2em 0em',
-      backgroundColor: 'white',
+      backgroundColor: BACKGROUND_COLOR,
       position: 'relative',
       zIndex: 1,
       width: '100%',
