@@ -395,8 +395,20 @@ const RubicoAPIMethod = e(x => {
             color: RUBICO_METHOD_COLOR,
             fontSize: '3em',
           },
-        }, [x.prev]),
+        }, [x.prev, ' < ']),
       ]),
+      H1({
+        style: {
+          visibility: x.prev ? 'visible' : 'hidden',
+          margin: '0 0',
+          color: 'black',
+          fontSize: '3em',
+          fontWeight: 700,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        },
+      }, ['<']),
       H1({
         style: {
           color: 'black',
@@ -405,6 +417,18 @@ const RubicoAPIMethod = e(x => {
           fontSize: '2.5em',
         },
       }, [x.name]),
+      H1({
+        style: {
+          visibility: x.next ? 'visible' : 'hidden',
+          margin: '0 0',
+          color: 'black',
+          fontSize: '3em',
+          fontWeight: 700,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        },
+      }, ['>']),
       Button({
         style: {
           visibility: x.next ? 'visible' : 'hidden',
@@ -417,13 +441,14 @@ const RubicoAPIMethod = e(x => {
         },
         onClick: () => { x.goto(x.next) },
       }, [
-        H1({
+        Span({
           style: {
             margin: '0 0',
             color: RUBICO_METHOD_COLOR,
             fontSize: '3em',
+            fontWeight: 700,
           },
-        }, [x.next]),
+        }, ['> ', x.next]),
       ]),
     ]),
   ])
@@ -907,6 +932,14 @@ helloObjectPromise.then(helloObject => console.log(helloObject))
         })],
       ],
       methods: [],
+    },
+    assign: {
+      name: 'assign',
+      signature: 'y = assign(functions)(x)',
+      description: 'fork, then merge new flow with original ⛓️',
+      prev: 'fork',
+      // next: 'tap',
+      rules: [],
     },
   },
 }
