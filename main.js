@@ -864,23 +864,23 @@ const x = {
         ])],
         [CodeRunner({
           code: `
-const appendA = x => x + 'A'
+const addA = x => x + 'A'
 
-const asyncAppendB = async x => x + 'B'
+const asyncAddB = async x => x + 'B'
 
-const appendC = x => x + 'C'
+const addC = x => x + 'C'
 
 const AC = pipe([
-  appendA, // '' => 'A'
-  appendC, // 'A' => 'AC'
+  addA, // '' => 'A'
+  addC, // 'A' => 'AC'
 ])('')
 
 console.log(AC)
 
 const ABCPromise = pipe([
-  appendA, // '' => 'A'
-  asyncAppendB, // 'A' => Promise { 'AB' }
-  appendC, // 'AB' => 'ABC'
+  addA, // '' => 'A'
+  asyncAddB, // 'A' => Promise { 'AB' }
+  addC, // 'AB' => 'ABC'
 ])('')
 
 ABCPromise.then(ABC => console.log(ABC))
@@ -947,6 +947,27 @@ helloObjectPromise.then(helloObject => console.log(helloObject))
       prev: 'fork',
       next: 'tap',
       rules: [
+        [SC('functions'), 'is an object of functions'],
+        ['all functions of', SC('functions'), 'are run concurrently'],
+        [SC('x'), 'is an object'],
+        [
+          SC('y'), 'is the original input merged with', 'the', SC('functions'),
+          '-shaped product of applying each function to', SC('x'),
+        ],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          ['any function of', SC('functions'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const add = (a, b) => a + b
+
+const putTotal = assign({
+  sum: x => x.values.reduce(add),
+})
+
+`.trimStart(),
+        })],
       ],
     },
   },
