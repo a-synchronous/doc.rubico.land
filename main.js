@@ -143,7 +143,11 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
       onClick: () => { x.goto(name) },
     }, [
       H2({
-        style: { margin: '0 0', color: RUBICO_METHOD_COLOR },
+        style: {
+          margin: '0 0',
+          color: name === x.path ? 'coral' : RUBICO_METHOD_COLOR,
+          textDecoration: name === x.path ? 'underline' : 'none',
+        },
       }, [name]),
     ]),
     Div({
