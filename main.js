@@ -1030,7 +1030,30 @@ console.log(sum)
       description: 'try a function, catch with another 🔗',
       prev: 'tap',
       next: 'switchCase',
-      rules: [],
+      rules: [
+        [SC('tryer'), 'is a function'],
+        [SC('catcher'), 'is a binary function of signature', SC('(err, x) => {...}')],
+        [SList([
+          [SC('err'), 'is an error potentially thrown by', SC('tryer')],
+        ])],
+        [SC('x'), 'is anything'],
+        [SC('y'), 'is', SC('tryer(x)'), 'or', SC('catcher(err, x)'), 'on error'],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('tryer'), 'is asynchronous'],
+          [SC('catcher'), 'is asynchronous and', SC('tryer'), 'threw'],
+        ])],
+        [CodeRunner({
+          code: `
+const errorThrower = tryCatch(
+  message => { throw new Error(message) },
+  (err, x) => { console.log(err); return x + ' from catcher' },
+)
+
+console.log(errorThrower('hello'))
+`.trimStart(),
+        })],
+      ],
     },
     switchCase: {
       name: 'switchCase',
