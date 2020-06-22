@@ -371,12 +371,13 @@ const RubicoAPIMethod = e(x => {
       },
     }, [x.signature])]),
     Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.rules || [])]),
-    Div({
-      style: {
-        display: 'flex',
-        justifyContent: 'center',
-      },
-    }, [
+    Div(null, [
+      map.withIndex(pipe([
+        (xi, i) => ({ ...xi, i }),
+        xi => Div({ key: xi.i }, [RubicoAPIMethod(xi)]),
+      ]))(x.methods || []),
+    ]),
+    Div({ style: { display: 'flex', justifyContent: 'center' } }, [
       Button({
         style: {
           visibility: x.prev ? 'visible' : 'hidden',
@@ -387,7 +388,7 @@ const RubicoAPIMethod = e(x => {
           margin: '.25em 0',
           padding: '0 0',
         },
-        onClick: () => { x.goto(x.prev) },
+        onClick: () => { x.goto && x.goto(x.prev) },
       }, [
         H1({
           style: {
@@ -411,6 +412,7 @@ const RubicoAPIMethod = e(x => {
       }, ['<']),
       H1({
         style: {
+          display: typeof x.i === 'undefined' ? 'block' : 'none',
           color: 'black',
           margin: '1em .5em',
           lineHeight: '1em',
@@ -439,7 +441,7 @@ const RubicoAPIMethod = e(x => {
           margin: '.25em 0',
           padding: '0 0',
         },
-        onClick: () => { x.goto(x.next) },
+        onClick: () => { x.goto && x.goto(x.next) },
       }, [
         Span({
           style: {
@@ -784,7 +786,7 @@ const CodeRunner = e(x => {
       style: {
         display: 'grid',
         gridTemplateColumns: '3em 1em auto',
-        height: '10em',
+        height: '5em',
       },
     }, [
       Button({
@@ -816,7 +818,7 @@ const CodeRunner = e(x => {
       Iframe({
         style: {
           visibility: outputAreaSrc ? 'visible' : 'hidden',
-          height: '10em',
+          height: '5em',
           position: 'relative',
           bottom: '-0.05em',
         },
@@ -923,15 +925,25 @@ helloObjectPromise.then(helloObject => console.log(helloObject))
 `.trimStart(),
         })],
       ],
-      methods: [],
+      methods: [
+        {
+          name: 'fork.series',
+          signature: 'y = fork.series(functions)(x)',
+          description: 'fork in series 🔗',
+          rules: [
+            ['all functions of', SC('functions'), 'are run in series'],
+          ],
+        },
+      ],
     },
     assign: {
       name: 'assign',
       signature: 'y = assign(functions)(x)',
       description: 'fork, then merge new flow with original ⛓️',
       prev: 'fork',
-      // next: 'tap',
-      rules: [],
+      next: 'tap',
+      rules: [
+      ],
     },
   },
 }
