@@ -175,7 +175,6 @@ const RubicoAPIMethods = e(x => Div({
     position: 'relative',
     zIndex: 1,
     width: '100%',
-    minHeight: '16%',
   },
 }, [
   Section(null, [
@@ -318,6 +317,7 @@ const RubicoAPIMethods = e(x => Div({
       })(x),
     ]),
   ]),
+  Section({ style: { minHeight: '100em' } }),
 ]))
 
 const RubicoAPIMethodRule = (children, i) => Li({
@@ -345,6 +345,7 @@ const RubicoAPIMethod = e(x => {
     Code(null, [Pre({
       style: {
         backgroundColor: 'darkslategrey',
+        // backgroundColor: 'pink',
         color: 'white',
         padding: '.5em',
         width: '85%',
@@ -362,7 +363,7 @@ const RubicoAPI = e(x => Div({
   Section({
     style: x.path ? ({
       maxHeight: '0%',
-      transition: 'max-height .28s ease-out',
+      transition: 'max-height .08s ease-out',
     }) : ({
       maxHeight: '25%',
       transition: 'max-height .28s ease-in',
@@ -391,8 +392,27 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
   ]),
   RubicoAPIMethods(x),
   Section({
-    style: { display: x.path ? 'block' : 'none' },
-  }, [RubicoAPIMethod(x.method)]),
+    style: {
+      position: 'relative',
+      zIndex: 1,
+      top: '-100em',
+      ...x.path && x.prevPath && x.isTransitioning ? ({
+        display: 'block',
+        opacity: 0,
+        filter: 'grayscale(1)',
+        transition: 'opacity .5s, filter .65s',
+      }) : x.path && x.prevPath ? ({
+        display: 'block',
+        opacity: 1,
+        filter: 'grayscale(0)',
+        transition: 'opacity 1s, filter .85s',
+      }) : x.path ? ({
+        display: 'block',
+      }) : ({
+        display: 'none',
+      }),
+    },
+  }, [RubicoAPIMethod(x.isTransitioning ? x.methods[x.prevPath] : x.method)]),
 ]))
 
 const NotFound = e(() => H1(null, ['not found']))
@@ -409,16 +429,35 @@ const rubicoAPIMethods = new Set([
 const cleanHash = hash => hash.startsWith('#') ? hash.slice(1) : hash
 
 const Root = e(x => {
-  const [{ hash, prevHash }, dispatch] = useReducer(
+  const [{
+    hash,
+    prevHash,
+    isTransitioning,
+  }, dispatch] = useReducer(
     (state, action) => switchCase([
-      eq('GOTO', get('type')), action => ({
+      eq('EXIT_TRANSITION', get('type')), action => ({
+        ...state, isTransitioning: false,
+      }),
+      eq('GOTO', get('type')), action => action.hash === state.hash ? state : ({
         hash: action.hash,
         prevHash: state.hash,
+        isTransitioning: action.hash && !!state.hash,
       }),
       () => state,
     ])(action),
-    { hash: cleanHash(location.hash), prevHash: '' },
+    {
+      hash: cleanHash(location.hash),
+      prevHash: '',
+      isTransitioning: false,
+    },
   )
+  useEffect(() => {
+    if (!isTransitioning) return
+    setTimeout(() => {
+      if (!isTransitioning) return
+      dispatch({ type: 'EXIT_TRANSITION' })
+    }, 500)
+  })
   useEffect(() => {
     const setLocationHash = () => {
       dispatch({ type: 'GOTO', hash: cleanHash(location.hash) })
@@ -440,6 +479,7 @@ const Root = e(x => {
       },
       path: () => hash,
       prevPath: () => prevHash,
+      isTransitioning: () => isTransitioning,
       method: get(['methods', hash]),
     }),
     switchCase([
@@ -750,20 +790,20 @@ const greet = whom => greeting => greeting + ' ' + whom
 
 const asyncGreet = whom => async greeting => greeting + ' ' + whom
 
-const arrayOfHellos = fork([
+const helloArray = fork([
   greet('world'), // 'hello' => 'hello world'
   greet('mom'), // 'hello' => 'hello mom'
 ])('hello')
 
-console.log(arrayOfHellos)
+console.log(helloArray)
 
-const objectOfHellosPromise = fork({
+const helloObjectPromise = fork({
   toWorld: greet('world'), // 'hello => 'hello world'
   toMom: greet('mom'), // 'hello => 'hello mom'
   toAsync: asyncGreet('async'), // 'hello => Promise { 'hello async' }
 })('hello')
 
-objectOfHellosPromise.then(objectOfHellos => console.log(objectOfHellos))
+helloObjectPromise.then(helloObject => console.log(helloObject))
 `.trimStart(),
         })],
       ],
