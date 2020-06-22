@@ -66,7 +66,7 @@ const RubicoAPIHomeLink = e(x => {
   return Div(null, [
     Button({
       style: {
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: 'inherit',
         border: 'none',
         outline: 'none',
         cursor: 'pointer',
@@ -120,7 +120,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
   }, [
     Button({
       style: {
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: 'inherit',
         border: 'none',
         outline: 'none',
         cursor: 'pointer',
@@ -156,7 +156,7 @@ const RubicoAPIMethodLinkDisabled = ({ name, description }) => e(x => {
   return Li(null, [
     Button({
       style: {
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: 'inherit',
         border: 'none',
         outline: 'none',
         cursor: 'text',
@@ -326,7 +326,7 @@ const RubicoAPIMethods = e(x => Div({
       })(x),
     ]),
   ]),
-  Section({ style: { minHeight: '100em' } }),
+  Section({ style: { minHeight: '20em' } }),
 ]))
 
 const RubicoAPIMethodRule = (children, i) => Li({
@@ -343,7 +343,6 @@ const RubicoAPIMethod = e(x => {
   return Div({
     style: {
       padding: '2em 0em',
-      backgroundColor: BACKGROUND_COLOR,
       position: 'relative',
       zIndex: 1,
       width: '100%',
@@ -404,7 +403,7 @@ rubico is a robust, highly optimized, and dependency free syntax for async agnos
     style: {
       position: 'relative',
       zIndex: 1,
-      top: '-100em',
+      top: '-20em',
       ...x.path && x.prevPath && x.isTransitioning ? ({
         display: 'block',
         opacity: 0,
