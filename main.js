@@ -62,6 +62,14 @@ const RUBICO_TITLE_COLOR = 'steelblue'
 const RUBICO_HEADING_COLOR = 'darkslategrey'
 const RUBICO_METHOD_COLOR = 'steelblue'
 
+const CODE_STYLE = {
+  // backgroundColor: 'darkslategrey',
+  backgroundColor: 'aliceblue',
+  // color: 'white',
+  color: 'darkslategrey',
+  fontFamily: 'monospace',
+}
+
 const RubicoAPIHomeLink = e(x => {
   return Div(null, [
     Button({
@@ -352,12 +360,9 @@ const RubicoAPIMethod = e(x => {
     P(null, [x.description]),
     Code(null, [Pre({
       style: {
-        backgroundColor: 'darkslategrey',
-        // backgroundColor: 'pink',
-        color: 'white',
-        padding: '.5em',
-        width: '85%',
-        fontFamily: 'monospace',
+        ...CODE_STYLE,
+        padding: '.5em 1em',
+        borderRadius: '1em',
       },
     }, [x.signature])]),
     Ul(null, [map.withIndex(RubicoAPIMethodRule)(x.rules || [])]),
@@ -503,11 +508,7 @@ const Root = e(x => {
 })
 
 const SC = code => Code({
-  style: {
-    backgroundColor: 'darkslategrey',
-    color: 'white',
-    padding: '.15em .35em',
-  },
+  style: { ...CODE_STYLE, padding: '0' },
 }, [code])
 
 const SB = name => B(null, [name])
@@ -667,7 +668,7 @@ const CodeRunner = e(x => {
       mode: 'javascript',
       lineWrapping: true,
       lineNumbers: true,
-      theme: 'default',
+      theme: 'rubico',
     })
     codeMirrors.set(codeAreaRef, cm)
     return () => {
