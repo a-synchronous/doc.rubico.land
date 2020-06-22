@@ -500,6 +500,9 @@ const RubicoAPI = e(x => Div({
         style: { listStyle: 'none' },
       }, ['⛓️  - executes in parallel']),
     ]),
+    P(null, [
+      'All methods have a runnable and editable code example.',
+    ]),
   ]),
   Br(), Br(),
   RubicoAPIMethods(x),
