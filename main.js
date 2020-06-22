@@ -363,10 +363,10 @@ const RubicoAPI = e(x => Div({
   Section({
     style: x.path ? ({
       maxHeight: '0%',
-      transition: 'max-height .08s ease-out',
+      transition: 'max-height .28s ease-out',
     }) : ({
       maxHeight: '25%',
-      transition: 'max-height .28s ease-in',
+      transition: 'max-height .48s ease-in',
     }),
   }, [
     P({
