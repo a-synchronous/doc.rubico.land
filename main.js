@@ -145,7 +145,7 @@ const RubicoAPIMethodLink = ({ name, description }) => e(x => {
       H2({
         style: {
           margin: '0 0',
-          color: name === x.path ? 'orangered' : RUBICO_METHOD_COLOR,
+          color: name === x.path ? 'darkred' : RUBICO_METHOD_COLOR,
           textDecoration: name === x.path ? 'underline' : 'none',
         },
       }, [name]),
