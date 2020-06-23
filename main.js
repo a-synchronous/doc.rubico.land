@@ -1366,7 +1366,39 @@ console.log(uniqueInOrder([1,2,2,3,3]))
       description: 'execute data transformation (idiomatic) 🔗 🏎',
       prev: 'filter',
       next: 'transform',
-      rules: [],
+      rules: [
+        [SC('f'), 'is a reducer function'],
+        [SC('x0'), 'is an optional initial value for', SC('y')],
+        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SList([
+          [SC('xi'), 'is an element of', SC('x')],
+        ])],
+        [SC('y'), 'is the last', SC('f(y, xi)'), 'upon iterating through each', SC('xi'), 'of', SC('x')],
+        [SC('y'), 'is a promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+          [SC('x'), 'is an async iterable'],
+        ])],
+        [CodeRunner({
+          code: `
+const add = (a, b) => a + b
+
+console.log(reduce(add, 0)([1, 2, 3, 4, 5]))
+
+const asyncAdd = async (a, b) => a + b
+
+reduce(asyncAdd, 100)([1, 2, 3, 4, 5]).then(console.log)
+
+const asyncNumbersGeneratedIterable = (async function*() {
+  for (let i = 0; i < 5; i++) { yield i + 1 }
+})() // generated async iterable that yields 1 2 3 4 5
+
+const concat = (y, xi) => y.concat([xi])
+
+reduce(concat, [])(asyncNumbersGeneratedIterable).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
     transform: {
       name: 'transform',
@@ -1374,7 +1406,36 @@ console.log(uniqueInOrder([1,2,2,3,3]))
       description: 'execute data transformation (expressive) 🔗 🏎',
       prev: 'reduce',
       next: 'any',
-      rules: [],
+      rules: [
+        [SC('f'), 'is a transducer, see', SLink(TRANDUCERS_URL, ['transducers'])],
+        [SC('x0'), 'is null, Array, String, Set, Map, TypedArray, or Writable'],
+        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SC('y'), 'is', SC('x'), 'transformed with', SC('f'), 'into', SC('x0')],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+          [SC('x'), 'is an async iterable'],
+        ])],
+        [SC('map'), 'is', SLink('#map', ['map'])],
+        [CodeRunner({
+          code: `
+const square = x => x ** 2
+
+console.log(
+  transform(map(square), '')([1, 2, 3, 4, 5]),
+) // transform an array to a string
+
+const asyncTriple = async x => x * 3
+
+transform(map(asyncTriple), [])(new Set([1, 2, 3])).then(console.log)
+
+const asyncNumbersGeneratedIterable = (async function*() {
+  for (let i = 0; i < 5; i++) { yield i + 1 }
+})() // generated async iterable that yields 1 2 3 4 5
+
+transform(map(square), new Set())(asyncNumbersGeneratedIterable).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
     any: {
       name: 'any',
