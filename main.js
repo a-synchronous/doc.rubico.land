@@ -876,7 +876,7 @@ const x = {
       next: 'fork',
       rules: [
         [SC('functions'), 'is an array of functions'],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is any value or function'],
         [
           'if', SC('x'), 'is a function,', SB('pipe'), 'chains',
           SC('functions'), 'from right to left, see', SLink(TRANDUCERS_URL, ['transducers']),
@@ -919,7 +919,7 @@ asyncAddABC('').then(console.log)
       rules: [
         [SC('functions'), 'is an array of functions or an object of functions'],
         ['all functions of', SC('functions'), 'are run concurrently'],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is anything but a function'],
         [
           SC('y'), 'is the', SC('functions'),
           '-shaped product of applying each function to', SC('x'),
@@ -957,7 +957,7 @@ asyncGreetAll('hello').then(console.log)
           rules: [
             [SC('functions'), 'is an array of functions or an object of functions'],
             ['all functions of', SC('functions'), 'are run in series'],
-            [SC('x'), 'is anything'],
+            [SC('x'), 'is anything but a function'],
             [
               SC('y'), 'is the', SC('functions'),
               '-shaped product of applying each function to', SC('x'),
@@ -992,7 +992,7 @@ fork.series([
       prev: 'fork',
       next: 'tap',
       rules: [
-        [SC('functions'), 'is an object of functions'],
+        [SC('functions'), 'is an Object of functions'],
         ['all functions of', SC('functions'), 'are run concurrently'],
         [SC('x'), 'is an Object'],
         [
@@ -1028,7 +1028,7 @@ asyncPutValues({ a: 1, b: 2, c: 3 }).then(console.log)
       next: 'tryCatch',
       rules: [
         [SC('f'), 'is a function'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is', SC('x')],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1082,7 +1082,7 @@ console.log(sum)
         [SList([
           [SC('err'), 'is an error potentially thrown by', SC('tryer')],
         ])],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is anything but a function'],
         [SC('y'), 'is', SC('tryer(x)'), 'or', SC('catcher(err, x)'), 'on error'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1118,7 +1118,7 @@ console.log(errorThrower('hello'))
           [SC('elseDo'), 'is a do function'],
           [SC('functions'), 'is at minimum', SC('[if1, do1, elseDo]')],
         ])],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is anything but a function'],
         [
           SC('y'), 'is', SC('doN(x)'), 'where the corresponding',
           SC('ifN(x)'), 'is the first truthy predicate, or',
@@ -1152,7 +1152,7 @@ evenOrOdd(2).then(console.log)
       next: 'filter',
       rules: [
         [SC('f'), 'is a function'],
-        [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
+        [SC('x'), 'is an Iterable, AsyncIterable, Object, or reducer function'],
         [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
         [SC('y'), 'is a promise if any of the following are true'],
         [SList([
@@ -1283,7 +1283,7 @@ map.series(delayedLog)([1, 2, 3, 4, 5])
       next: 'reduce',
       rules: [
         [SC('f'), 'is a predicate function'],
-        [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
+        [SC('x'), 'is an Iterable, AsyncIterable, Object, or reducer function'],
         [SC('y'), 'is', SC('x'), 'with elements excluded by', SC('f')],
         [SC('y'), 'is a promise if any of the following are true'],
         [SList([
@@ -1383,11 +1383,16 @@ console.log(uniqueInOrder([1,2,2,3,3]))
           code: `
 const add = (a, b) => a + b
 
-console.log(reduce(add, 0)([1, 2, 3, 4, 5]))
+console.log(
+  reduce(add, 0)([1, 2, 3, 4, 5]), // > 0 + 1 + 2 + 3 + 4 + 5
+)
 
 const asyncAdd = async (a, b) => a + b
 
-reduce(asyncAdd, 100)([1, 2, 3, 4, 5]).then(console.log)
+reduce(
+  asyncAdd,
+  100,
+)([1, 2, 3, 4, 5]).then(console.log) // 100 + 1 + 2 + 3 + 4 + 5
 
 const asyncNumbersGeneratedIterable = (async function*() {
   for (let i = 0; i < 5; i++) { yield i + 1 }
@@ -1395,7 +1400,10 @@ const asyncNumbersGeneratedIterable = (async function*() {
 
 const concat = (y, xi) => y.concat([xi])
 
-reduce(concat, [])(asyncNumbersGeneratedIterable).then(console.log)
+reduce(
+  concat,
+  [],
+)(asyncNumbersGeneratedIterable).then(console.log) // > [1, 2, 3, 4, 5]
 `.trimStart(),
         })],
       ],
@@ -1421,18 +1429,24 @@ reduce(concat, [])(asyncNumbersGeneratedIterable).then(console.log)
 const square = x => x ** 2
 
 console.log(
-  transform(map(square), '')([1, 2, 3, 4, 5]),
-) // transform an array to a string
+  transform(map(square), '')([1, 2, 3, 4, 5]), // > '1491625'
+)
 
 const asyncTriple = async x => x * 3
 
-transform(map(asyncTriple), [])(new Set([1, 2, 3])).then(console.log)
+transform(
+  map(asyncTriple),
+  [],
+)(new Set([1, 2, 3])).then(console.log) // > [3, 6, 9]
 
 const asyncNumbersGeneratedIterable = (async function*() {
   for (let i = 0; i < 5; i++) { yield i + 1 }
 })() // generated async iterable that yields 1 2 3 4 5
 
-transform(map(square), new Set())(asyncNumbersGeneratedIterable).then(console.log)
+transform(
+  map(square),
+  new Set(),
+)(asyncNumbersGeneratedIterable).then(console.log) // > Set { 1, 4, 9, 16, 25 }
 `.trimStart(),
         })],
       ],
@@ -1455,11 +1469,11 @@ transform(map(square), new Set())(asyncNumbersGeneratedIterable).then(console.lo
           code: `
 const isOdd = x => x % 2 === 1
 
-console.log(any(isOdd)([1, 2, 3, 4, 5]))
+console.log(any(isOdd)([1, 2, 3, 4, 5])) // > true
 
 const asyncIsOdd = async x => x % 2 === 1
 
-any(asyncIsOdd)({ b: 2, d: 4 }).then(console.log)
+any(asyncIsOdd)({ b: 2, d: 4 }).then(console.log) // > false
 `.trimStart(),
         })],
       ],
@@ -1482,11 +1496,11 @@ any(asyncIsOdd)({ b: 2, d: 4 }).then(console.log)
           code: `
 const exists = x => x !== undefined && x !== null
 
-console.log(all(exists)([1, 2, 3, 4, 5]))
+console.log(all(exists)([1, 2, 3, 4, 5])) // > true
 
 const asyncExists = async x => x !== undefined && x !== null
 
-all(asyncExists)({ a: 1, b: 2, c: null }).then(console.log)
+all(asyncExists)({ a: 1, b: 2, c: null }).then(console.log) // > false
 `.trimStart(),
         })],
       ],
@@ -1499,7 +1513,7 @@ all(asyncExists)({ a: 1, b: 2, c: null }).then(console.log)
       next: 'or',
       rules: [
         [SC('functions'), 'is an array of functions'],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is anything but a function'],
         [SC('y'), 'is true if all functions of', SC('functions'), 'evaluated with', SC('x'), 'are truthy'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1513,9 +1527,9 @@ const asyncIsOdd = async x => x % 2 === 1
 
 const lessThan3 = x => x < 3
 
-console.log(and([isOdd, lessThan3])(1))
+console.log(and([isOdd, lessThan3])(1)) // > true
 
-and([asyncIsOdd, lessThan3])(3).then(console.log)
+and([asyncIsOdd, lessThan3])(3).then(console.log) // > false
 `.trimStart(),
         })],
       ],
@@ -1528,7 +1542,7 @@ and([asyncIsOdd, lessThan3])(3).then(console.log)
       next: 'not',
       rules: [
         [SC('functions'), 'is an array of functions'],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is anything but a function'],
         [SC('y'), 'is true if any functions of', SC('functions'), 'evaluated with', SC('x'), 'are truthy'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1542,9 +1556,9 @@ const asyncIsOdd = async x => x % 2 === 1
 
 const lessThan3 = x => x < 3
 
-console.log(or([isOdd, lessThan3])(5))
+console.log(or([isOdd, lessThan3])(5)) // > true
 
-or([asyncIsOdd, lessThan3])(6).then(console.log)
+or([asyncIsOdd, lessThan3])(6).then(console.log) // > false
 `.trimStart(),
         })],
       ],
@@ -1557,7 +1571,7 @@ or([asyncIsOdd, lessThan3])(6).then(console.log)
       next: 'eq',
       rules: [
         [SC('f'), 'is a predicate function'],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is anything but a function'],
         [SC('y'), 'is true if', SC('f(x)'), 'is falsy'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1567,9 +1581,9 @@ or([asyncIsOdd, lessThan3])(6).then(console.log)
           code: `
 const isOdd = x => x % 2 === 1
 
-console.log(not(isOdd)(2))
+console.log(not(isOdd)(2)) // > true
 
-not(async x => isOdd(x))(1).then(console.log)
+not(async x => isOdd(x))(1).then(console.log) // false
 `.trimStart(),
         })],
       ],
@@ -1580,7 +1594,32 @@ not(async x => isOdd(x))(1).then(console.log)
       description: 'test if left equals right',
       prev: 'not',
       next: 'gt',
-      rules: [],
+      rules: [
+        [SC('left'), 'is any value or function'],
+        [SC('right'), 'is any value or function'],
+        [SC('x'), 'is anything but a function'],
+        [SC('y'), 'is true if', SC('leftCompare'), 'strictly equals', SC('rightCompare')],
+        [SList([
+          [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
+          [SC('rightCompare'), 'is', SC('right'), 'if right is a non-function value, else', SC('right(x)')],
+        ])],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('left'), 'is an asynchronous function'],
+          [SC('right'), 'is an asynchronous function'],
+        ])],
+        [CodeRunner({
+          code: `
+const square = x => x ** 2
+
+const asyncSquare = async x => x ** 2
+
+console.log(eq(square, 1)(1)) // > true
+
+eq(1, asyncSquare)(1).then(console.log) // > true
+`.trimStart(),
+        })],
+      ],
     },
     gt: {
       name: 'gt',
@@ -1588,7 +1627,28 @@ not(async x => isOdd(x))(1).then(console.log)
       description: 'test if left > right',
       prev: 'eq',
       next: 'lt',
-      rules: [],
+      rules: [
+        [SC('left'), 'is any value or function'],
+        [SC('right'), 'is any value or function'],
+        [SC('x'), 'is anything but a function'],
+        [SC('y'), 'is true if', SC('leftCompare'), 'is greater than', SC('rightCompare')],
+        [SList([
+          [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
+          [SC('rightCompare'), 'is', SC('right'), 'if right is a non-function value, else', SC('right(x)')],
+        ])],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('left'), 'is an asynchronous function'],
+          [SC('right'), 'is an asynchronous function'],
+        ])],
+        [CodeRunner({
+          code: `
+console.log(gt(x => x, 10)(11)) // > true
+
+gt(10, async x => x)(11).then(console.log) // > false
+`.trimStart(),
+        })],
+      ],
     },
     lt: {
       name: 'lt',
@@ -1596,7 +1656,28 @@ not(async x => isOdd(x))(1).then(console.log)
       description: 'test if left < right',
       prev: 'gt',
       next: 'gte',
-      rules: [],
+      rules: [
+        [SC('left'), 'is any value or function'],
+        [SC('right'), 'is any value or function'],
+        [SC('x'), 'is anything but a function'],
+        [SC('y'), 'is true if', SC('leftCompare'), 'is less than', SC('rightCompare')],
+        [SList([
+          [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
+          [SC('rightCompare'), 'is', SC('right'), 'if right is a non-function value, else', SC('right(x)')],
+        ])],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('left'), 'is an asynchronous function'],
+          [SC('right'), 'is an asynchronous function'],
+        ])],
+        [CodeRunner({
+          code: `
+console.log(lt(x => x, 10)(11)) // > false
+
+lt(10, async x => x)(11).then(console.log) // > true
+`.trimStart(),
+        })],
+      ],
     },
     gte: {
       name: 'gte',
@@ -1604,7 +1685,28 @@ not(async x => isOdd(x))(1).then(console.log)
       description: 'test if left >= right',
       prev: 'lt',
       next: 'lte',
-      rules: [],
+      rules: [
+        [SC('left'), 'is any value or function'],
+        [SC('right'), 'is any value or function'],
+        [SC('x'), 'is anything but a function'],
+        [SC('y'), 'is true if', SC('leftCompare'), 'is greater than or equal to', SC('rightCompare')],
+        [SList([
+          [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
+          [SC('rightCompare'), 'is', SC('right'), 'if right is a non-function value, else', SC('right(x)')],
+        ])],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('left'), 'is an asynchronous function'],
+          [SC('right'), 'is an asynchronous function'],
+        ])],
+        [CodeRunner({
+          code: `
+console.log(gte(x => x, 10)(10)) // > true
+
+gte(10, async x => x)(10).then(console.log) // > true
+`.trimStart(),
+        })],
+      ],
     },
     lte: {
       name: 'lte',
@@ -1612,7 +1714,28 @@ not(async x => isOdd(x))(1).then(console.log)
       description: 'test if left <= right',
       prev: 'gte',
       next: 'get',
-      rules: [],
+      rules: [
+        [SC('left'), 'is any value or function'],
+        [SC('right'), 'is any value or function'],
+        [SC('x'), 'is anything but a function'],
+        [SC('y'), 'is true if', SC('leftCompare'), 'is less than or equal to', SC('rightCompare')],
+        [SList([
+          [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
+          [SC('rightCompare'), 'is', SC('right'), 'if right is a non-function value, else', SC('right(x)')],
+        ])],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('left'), 'is an asynchronous function'],
+          [SC('right'), 'is an asynchronous function'],
+        ])],
+        [CodeRunner({
+          code: `
+console.log(lte(x => x, 10)(10)) // > true
+
+lte(10, async x => x)(10).then(console.log) // > true
+`.trimStart(),
+        })],
+      ],
     },
     get: {
       name: 'get',
@@ -1620,7 +1743,38 @@ not(async x => isOdd(x))(1).then(console.log)
       description: 'access a value by path or index',
       prev: 'lte',
       next: 'pick',
-      rules: [],
+      rules: [
+        [SC('path'), 'is a Number, String, dot-delimited String, or Array'],
+        [SC('defaultValue'), 'is anything but a function and is optional'],
+        [SC('x'), 'is an Object'],
+        [SC('y'), 'is the value that lies at the end of', SC('path')],
+        [CodeRunner({
+          code: `
+console.log(
+  get('a')({ a: 1, b: 2 }), // > 1
+)
+
+console.log(
+  get('a', 10)({}), // > 10
+)
+
+console.log(
+  get(0)(['hello', 'world']), // > 'hello'
+)
+
+console.log(
+  get('a.b.c')({ a: { b: { c: 'hey' } } }), // > 'hey'
+)
+
+console.log(
+  get([0, 'user', 'id'])([
+    { user: { id: '1' } },
+    { user: { id: '2' } },
+  ]), // > 1
+)
+`.trimStart(),
+        })],
+      ],
     },
     pick: {
       name: 'pick',
@@ -1628,14 +1782,44 @@ not(async x => isOdd(x))(1).then(console.log)
       description: 'only include provided properties',
       prev: 'get',
       next: 'omit',
-      rules: [],
+      rules: [
+        [SC('properties'), 'is an array of Strings'],
+        [SC('x'), 'is an Object'],
+        [SC('y'), 'is an Object composed of all properties enumerated in', SC('properties'), 'and defined in', SC('x')],
+        [CodeRunner({
+          code: `
+console.log(
+  pick(['a', 'b'])({ a: 1, b: 2, c: 3 }), // => { a: 1, b: 2 }
+)
+
+console.log(
+  pick(['d'])({ a: 1, b: 2, c: 3 }), // => {}
+)
+`.trimStart(),
+        })],
+      ],
     },
     omit: {
       name: 'omit',
       signature: 'y = omit(properties)(x)',
       description: 'exclude provided properties',
       prev: 'pick',
-      rules: [],
+      rules: [
+        [SC('properties'), 'is an array of Strings'],
+        [SC('x'), 'is an Object'],
+        [SC('y'), 'is an Object composed of every property in', SC('x'), 'except for those enumerated in', SC('properties')],
+        [CodeRunner({
+          code: `
+console.log(
+  omit(['a', 'b'])({ a: 1, b: 2, c: 3 }), // => { c: 3 }
+)
+
+console.log(
+  omit(['d'])({ a: 1, b: 2, c: 3 }), // => { a: 1, b: 2, c: 3 }
+)
+`.trimStart(),
+        })],
+      ],
     },
   },
 }
