@@ -488,15 +488,12 @@ const RubicoAPI = e(x => Div({
       ...x.path ? ({
         maxHeight: '0%',
         transition: 'max-height .28s ease-out',
+        visibility: 'hidden',
       }) : ({
         maxHeight: '25%',
         transition: 'max-height .48s ease-in',
-      }),
-      ...x.isTransitioning ? ({
-        visibility: 'hidden',
-      }) : ({
         visibility: 'visible',
-      })
+      }),
     },
   }, [
     P({
@@ -536,6 +533,7 @@ const RubicoAPI = e(x => Div({
   ]),
   Br(), Br(),
   RubicoAPIMethods(x),
+  /*
   Div({
     style: {
       position: 'relative',
@@ -544,6 +542,7 @@ const RubicoAPI = e(x => Div({
       height: '5em',
     },
   }),
+  */
   Section({
     style: {
       position: 'relative',
