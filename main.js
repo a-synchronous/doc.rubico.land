@@ -242,7 +242,7 @@ const RubicoAPIMethods = e(x => Div({
     RubicoAPIMethodLinkList(x, [
       RubicoAPIMethodLink({
         name: 'map',
-        description: 'apply function to data ⛓️',
+        description: get('methods.map.description')(x),
       })(x, [
         RubicoAPIMethodLinkDisabled({
           name: 'map.pool',
@@ -406,16 +406,13 @@ const RubicoAPIMethod = e(x => {
             color: RUBICO_METHOD_COLOR,
             fontSize: '3em',
             fontWeight: 700,
-            display: 'grid',
-            gridTemplateColumns: 'auto auto',
-            gridGap: '.35em',
+            display: 'flex',
           },
         }, [Span(null, [x.prev]), Span(null, [' < '])]),
       ]),
       Div({
         style: {
-          display: 'grid',
-          gridTemplateColumns: '10% auto 10%',
+          display: 'flex',
         },
       }, [
         H1({
@@ -437,6 +434,8 @@ const RubicoAPIMethod = e(x => {
             margin: '1em .5em',
             lineHeight: '1em',
             fontSize: '2.5em',
+            // textAlign: 'center',
+            position: 'relative',
           },
         }, [x.name]),
         H1({
@@ -470,11 +469,9 @@ const RubicoAPIMethod = e(x => {
             color: RUBICO_METHOD_COLOR,
             fontSize: '3em',
             fontWeight: 700,
-            display: 'grid',
-            gridTemplateColumns: 'auto auto',
-            gridGap: '.35em',
+            display: 'flex',
           },
-        }, [Span({ style: { marginLeft: '.1em' } }, [' > ']), Span(null, [x.next])]),
+        }, [Span(null, [' > ']), Span(null, [' ']), Span(null, [x.next])]),
       ]),
     ]),
   ])
@@ -1114,6 +1111,13 @@ evenOrOdd(2).then(console.log)
 `.trimStart(),
         })],
       ],
+    },
+    map: {
+      name: 'map',
+      signature: 'y = map(f)(x)',
+      description: 'linearly transform data ⛓️',
+      prev: 'switchCase',
+      next: 'filter',
     },
   },
 }
