@@ -527,6 +527,14 @@ const RubicoAPI = e(x => Div({
   ]),
   Br(), Br(),
   RubicoAPIMethods(x),
+  Div({
+    style: {
+      position: 'relative',
+      zIndex: 1,
+      backgroundColor: BACKGROUND_COLOR,
+      height: '2em',
+    },
+  }),
   Section({
     style: {
       position: 'relative',
