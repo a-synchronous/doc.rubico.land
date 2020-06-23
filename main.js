@@ -994,7 +994,7 @@ fork.series([
       rules: [
         [SC('functions'), 'is an object of functions'],
         ['all functions of', SC('functions'), 'are run concurrently'],
-        [SC('x'), 'is an object'],
+        [SC('x'), 'is an Object'],
         [
           SC('y'), 'is the original input merged with', 'the', SC('functions'),
           '-shaped product of applying each function to', SC('x'),
@@ -1121,7 +1121,7 @@ console.log(errorThrower('hello'))
         [SC('x'), 'is anything'],
         [
           SC('y'), 'is', SC('doN(x)'), 'where the corresponding',
-          SC('ifN(x)'), 'is the first truthful predicate, or',
+          SC('ifN(x)'), 'is the first truthy predicate, or',
           SC('elseDo(x)'), 'on no truthy predicates',
         ],
         [SC('y'), 'is a promise if any of the following are true'],
@@ -1152,11 +1152,11 @@ evenOrOdd(2).then(console.log)
       next: 'filter',
       rules: [
         [SC('f'), 'is a function'],
-        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
         [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
         [SC('y'), 'is a promise if any of the following are true'],
         [SList([
-          [SC('f'), 'is asynchronous and', SC('x'), 'is not an async iterable'],
+          [SC('f'), 'is asynchronous and', SC('x'), 'is not an AsyncIterable'],
         ])],
         [CodeRunner({
           code: `
@@ -1283,7 +1283,7 @@ map.series(delayedLog)([1, 2, 3, 4, 5])
       next: 'reduce',
       rules: [
         [SC('f'), 'is a predicate function'],
-        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
         [SC('y'), 'is', SC('x'), 'with elements excluded by', SC('f')],
         [SC('y'), 'is a promise if any of the following are true'],
         [SList([
@@ -1369,7 +1369,7 @@ console.log(uniqueInOrder([1,2,2,3,3]))
       rules: [
         [SC('f'), 'is a reducer function'],
         [SC('x0'), 'is an optional initial value for', SC('y')],
-        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
         [SList([
           [SC('xi'), 'is an element of', SC('x')],
         ])],
@@ -1377,7 +1377,7 @@ console.log(uniqueInOrder([1,2,2,3,3]))
         [SC('y'), 'is a promise if any of the following are true'],
         [SList([
           [SC('f'), 'is asynchronous'],
-          [SC('x'), 'is an async iterable'],
+          [SC('x'), 'is an AsyncIterable'],
         ])],
         [CodeRunner({
           code: `
@@ -1409,11 +1409,11 @@ reduce(concat, [])(asyncNumbersGeneratedIterable).then(console.log)
       rules: [
         [SC('f'), 'is a transducer, see', SLink(TRANDUCERS_URL, ['transducers'])],
         [SC('x0'), 'is null, Array, String, Set, Map, TypedArray, or Writable'],
-        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
         [SC('y'), 'is', SC('x'), 'transformed with', SC('f'), 'into', SC('x0')],
         [SList([
           [SC('f'), 'is asynchronous'],
-          [SC('x'), 'is an async iterable'],
+          [SC('x'), 'is an AsyncIterable'],
         ])],
         [SC('map'), 'is', SLink('#map', ['map'])],
         [CodeRunner({
@@ -1443,7 +1443,26 @@ transform(map(square), new Set())(asyncNumbersGeneratedIterable).then(console.lo
       description: 'test if function of any data truthy ⛓️',
       prev: 'transform',
       next: 'all',
-      rules: [],
+      rules: [
+        [SC('f'), 'is a function'],
+        [SC('x'), 'is an Iterable or Object'],
+        [SC('y'), 'is true if any evaluations of', SC('f'), 'with the elements of', SC('x'), 'are truthy'],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const isOdd = x => x % 2 === 1
+
+console.log(any(isOdd)([1, 2, 3, 4, 5]))
+
+const asyncIsOdd = async x => x % 2 === 1
+
+any(asyncIsOdd)({ b: 2, d: 4 }).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
     all: {
       name: 'all',
@@ -1451,23 +1470,84 @@ transform(map(square), new Set())(asyncNumbersGeneratedIterable).then(console.lo
       description: 'test if function of all data truthy ⛓️',
       prev: 'any',
       next: 'and',
-      rules: [],
+      rules: [
+        [SC('f'), 'is a function'],
+        [SC('x'), 'is an Iterable or Object'],
+        [SC('y'), 'is true if all evaluations of', SC('f'), 'with the elements of', SC('x'), 'are truthy'],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const exists = x => x !== undefined && x !== null
+
+console.log(all(exists)([1, 2, 3, 4, 5]))
+
+const asyncExists = async x => x !== undefined && x !== null
+
+all(asyncExists)({ a: 1, b: 2, c: null }).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
     and: {
       name: 'and',
-      signature: 'y = and(f)(x)',
+      signature: 'y = and(functions)(x)',
       description: 'test if all functions of data truthy ⛓️',
       prev: 'all',
       next: 'or',
-      rules: [],
+      rules: [
+        [SC('functions'), 'is an array of functions'],
+        [SC('x'), 'is anything'],
+        [SC('y'), 'is true if all functions of', SC('functions'), 'evaluated with', SC('x'), 'are truthy'],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          ['any function of', SC('functions'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const isOdd = x => x % 2 === 1
+
+const asyncIsOdd = async x => x % 2 === 1
+
+const lessThan3 = x => x < 3
+
+console.log(and([isOdd, lessThan3])(1))
+
+and([asyncIsOdd, lessThan3])(3).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
     or: {
       name: 'or',
-      signature: 'y = or(f)(x)',
+      signature: 'y = or(functions)(x)',
       description: 'test if any functions of data truthy ⛓️',
       prev: 'and',
       next: 'not',
-      rules: [],
+      rules: [
+        [SC('functions'), 'is an array of functions'],
+        [SC('x'), 'is anything'],
+        [SC('y'), 'is true if any functions of', SC('functions'), 'evaluated with', SC('x'), 'are truthy'],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          ['any function of', SC('functions'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const isOdd = x => x % 2 === 1
+
+const asyncIsOdd = async x => x % 2 === 1
+
+const lessThan3 = x => x < 3
+
+console.log(or([isOdd, lessThan3])(5))
+
+or([asyncIsOdd, lessThan3])(6).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
     not: {
       name: 'not',
@@ -1475,7 +1555,24 @@ transform(map(square), new Set())(asyncNumbersGeneratedIterable).then(console.lo
       description: 'test if function of data falsy',
       prev: 'and',
       next: 'not',
-      rules: [],
+      rules: [
+        [SC('f'), 'is a predicate function'],
+        [SC('x'), 'is anything'],
+        [SC('y'), 'is true if', SC('f(x)'), 'is falsy'],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const isOdd = x => x % 2 === 1
+
+console.log(not(isOdd)(2))
+
+not(async x => isOdd(x))(1).then(console.log)
+`.trimStart(),
+        })],
+      ],
     },
     eq: {
       name: 'eq',
