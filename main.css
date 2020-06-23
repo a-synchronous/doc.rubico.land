@@ -1,3 +1,7 @@
+* {
+  font-family: monospace;
+}
+
 body {
   display: grid;
   grid-template-columns: auto 80% auto;
