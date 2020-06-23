@@ -1554,7 +1554,7 @@ or([asyncIsOdd, lessThan3])(6).then(console.log)
       signature: 'y = not(f)(x)',
       description: 'test if function of data falsy',
       prev: 'and',
-      next: 'not',
+      next: 'eq',
       rules: [
         [SC('f'), 'is a predicate function'],
         [SC('x'), 'is anything'],
