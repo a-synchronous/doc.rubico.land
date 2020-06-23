@@ -484,13 +484,20 @@ const RubicoAPI = e(x => Div({
 }, [
   Section(null, [RubicoAPIHomeLink(x)]),
   Section({
-    style: x.path ? ({
-      maxHeight: '0%',
-      transition: 'max-height .28s ease-out',
-    }) : ({
-      maxHeight: '25%',
-      transition: 'max-height .48s ease-in',
-    }),
+    style: {
+      ...x.path ? ({
+        maxHeight: '0%',
+        transition: 'max-height .28s ease-out',
+      }) : ({
+        maxHeight: '25%',
+        transition: 'max-height .48s ease-in',
+      }),
+      ...x.isTransitioning ? ({
+        visibility: 'hidden',
+      }) : ({
+        visibility: 'visible',
+      })
+    },
   }, [
     P({
       style: {
