@@ -259,11 +259,11 @@ const RubicoAPIMethods = e(x => Div({
       ]),
       RubicoAPIMethodLink({
         name: 'filter',
-        description: 'exclude data by predicate ⛓️ 🎴',
+        description: get('methods.filter.description')(x),
       })(x, [
         RubicoAPIMethodLinkDisabled({
           name: 'filter.withIndex',
-          description: 'filter with index ⛓️',
+          description: get('methods.filter.methods.1.description')(x),
         })(x),
       ]),
       RubicoAPIMethodLink({
@@ -519,7 +519,7 @@ const RubicoAPI = e(x => Div({
       }, ['⛓️  -  asynchronously executes functions in parallel']),
       Li({
         style: { listStyle: 'none' },
-      }, ['🎴 - can be used to create transducers']),
+      }, ['🏎 - can be used to create transducers']),
     ]),
     P(null, [
       'All methods have a runnable and editable code example.',
@@ -872,7 +872,7 @@ const x = {
     pipe: {
       name: 'pipe',
       signature: 'y = pipe(functions)(x)',
-      description: 'define flow: chain functions together 🔗 🎴',
+      description: 'define flow: chain functions together 🔗 🏎',
       next: 'fork',
       rules: [
         [SC('functions'), 'is an array of functions'],
@@ -988,7 +988,7 @@ fork.series([
     assign: {
       name: 'assign',
       signature: 'y = assign(functions)(x)',
-      description: 'fork, then merge new flow with original ⛓️ 🎴 ',
+      description: 'fork, then merge new flow with original ⛓️ ',
       prev: 'fork',
       next: 'tap',
       rules: [
@@ -1023,7 +1023,7 @@ asyncPutValues({ a: 1, b: 2, c: 3 }).then(console.log)
     tap: {
       name: 'tap',
       signature: 'y = tap(f)(x)',
-      description: 'spy on flow',
+      description: 'spy on flow 🏎',
       prev: 'assign',
       next: 'tryCatch',
       rules: [
@@ -1147,7 +1147,7 @@ evenOrOdd(2).then(console.log)
     map: {
       name: 'map',
       signature: 'y = map(f)(x)',
-      description: 'linearly transform data ⛓ 🎴',
+      description: 'linearly transform data ⛓ 🏎',
       prev: 'switchCase',
       next: 'filter',
       rules: [
@@ -1269,6 +1269,91 @@ const delayedLog = x => new Promise(resolve => {
 
 console.log('start')
 map.series(delayedLog)([1, 2, 3, 4, 5])
+`.trimStart(),
+            })],
+          ],
+        },
+      ],
+    },
+    filter: {
+      name: 'filter',
+      signature: 'y = filter(f)(x)',
+      description: 'exclude data by predicate ⛓ 🏎',
+      prev: 'map',
+      next: 'reduce',
+      rules: [
+        [SC('f'), 'is a predicate function'],
+        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SC('y'), 'is', SC('x'), 'with elements excluded by', SC('f')],
+        [SC('y'), 'is a promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const isOdd = x => x % 2 === 1
+
+console.log(filter(isOdd)([1, 2, 3, 4, 5]))
+console.log(filter(isOdd)({ a: 1, b: 2, c: 3 }))
+
+const asyncIsOdd = async x => x % 2 === 1
+
+filter(asyncIsOdd)(new Set([1, 2, 3, 4, 5])).then(console.log)
+`.trimStart(),
+        })],
+      ],
+      methods: [
+        {
+          name: 'filter (transducing)',
+          signature: 'filterReducer = filter(f)(reducer)',
+          description: 'filter for transducers',
+          rules: [
+            [SC('f'), 'is a predicate function'],
+            [SC('reducer'), 'is a reducer function'],
+            [
+              SC('filterReducer'), 'is', SC('reducer'), 'with pipeline elements',
+              'filtered according to predicate', SC('f'),
+            ],
+            [CodeRunner({
+              code: `
+const isOdd = x => x % 2 === 1
+
+const concat = (arr, x) => arr.concat(x)
+
+console.log(
+  reduce(filter(isOdd)(concat), [])([1, 2, 3, 4, 5])
+)
+`.trimStart(),
+            })],
+          ],
+        },
+        {
+          name: 'filter.withIndex',
+          signature: 'y = filter.withIndex(f)(x)',
+          description: 'filter with index ⛓️',
+          rules: [
+            [SC('f'), 'is a function'],
+            [SC('x'), 'is an Array or String'],
+            [SC('y'), 'is', SC('x'), 'with elements excluded by', SC('f')],
+            [SC('y'), 'is a promise if any of the following are true'],
+            [SList([
+              [SC('f'), 'is asynchronous'],
+            ])],
+            [CodeRunner({
+              code: `
+const uniqueInOrder = filter.withIndex((current, index, array) => {
+  if (index === 0) {
+    return true
+  } else if (current === array[index - 1]) {
+    return false
+  } else {
+    return true
+  }
+})
+
+console.log(uniqueInOrder('AAAABBBCCDAABBB'))
+console.log(uniqueInOrder('ABBCcAD'))
+console.log(uniqueInOrder([1,2,2,3,3]))
 `.trimStart(),
             })],
           ],
