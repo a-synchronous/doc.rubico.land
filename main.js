@@ -819,7 +819,6 @@ const CodeRunner = e(x => {
     }, [
       Button({
         style: {
-          padding: '.25em .75em',
           borderRadius: '2px',
           cursor: 'pointer',
           height: '2em',
