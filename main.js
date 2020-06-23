@@ -397,6 +397,7 @@ const RubicoAPIMethod = e(x => {
           cursor: 'pointer',
           margin: '.25em 0',
           padding: '0 0',
+          fontSize: '.8em',
         },
         onClick: () => { x.goto && x.goto(x.prev) },
       }, [
@@ -460,6 +461,7 @@ const RubicoAPIMethod = e(x => {
           cursor: 'pointer',
           margin: '.25em 0',
           padding: '0 0',
+          fontSize: '.8em',
         },
         onClick: () => { x.goto && x.goto(x.next) },
       }, [
