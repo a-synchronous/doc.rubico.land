@@ -216,24 +216,24 @@ const RubicoAPIMethods = e(x => Div({
       })(x, [
         RubicoAPIMethodLinkDisabled({
           name: 'fork.series',
-          description: 'fork in series 🔗',
+          description: get('methods.fork.methods.0.description')(x),
         })(x),
       ]),
       RubicoAPIMethodLink({
         name: 'assign',
-        description: 'fork, then merge new flow with original ⛓️',
+        description: get('methods.assign.description')(x),
       })(x),
       RubicoAPIMethodLink({
         name: 'tap',
-        description: 'spy on flow',
+        description: get('methods.tap.description')(x),
       })(x),
       RubicoAPIMethodLink({
         name: 'tryCatch',
-        description: 'try a function, catch with another 🔗',
+        description: get('methods.tryCatch.description')(x),
       })(x),
       RubicoAPIMethodLink({
         name: 'switchCase',
-        description: 'control flow 🔗',
+        description: get('methods.switchCase.description')(x),
       })(x),
     ]),
   ]),
@@ -246,20 +246,20 @@ const RubicoAPIMethods = e(x => Div({
       })(x, [
         RubicoAPIMethodLinkDisabled({
           name: 'map.pool',
-          description: 'map with asynchronous limit ⛓️',
+          description: get('methods.map.methods.1.description')(x),
         })(x),
         RubicoAPIMethodLinkDisabled({
           name: 'map.withIndex',
-          description: 'map with index ⛓️',
+          description: get('methods.map.methods.2.description')(x),
         })(x),
         RubicoAPIMethodLinkDisabled({
           name: 'map.series',
-          description: 'map in series 🔗',
+          description: get('methods.map.methods.3.description')(x),
         })(x),
       ]),
       RubicoAPIMethodLink({
         name: 'filter',
-        description: 'exclude data by predicate ⛓️',
+        description: 'exclude data by predicate ⛓️ 🎴',
       })(x, [
         RubicoAPIMethodLinkDisabled({
           name: 'filter.withIndex',
@@ -506,17 +506,20 @@ const RubicoAPI = e(x => Div({
       '.',
     ]),
     P(null, [
-      'The tags below denote the asynchronous behavior of a given method',
+      'The tags below denote points of interest for a given method',
     ]),
     Ul({
       style: { paddingInlineStart: '1em' },
     }, [
       Li({
         style: { listStyle: 'none' },
-      }, ['🔗 - executes in series']),
+      }, ['🔗 - asynchronously executes functions in series']),
       Li({
         style: { listStyle: 'none' },
-      }, ['⛓️  - executes in parallel']),
+      }, ['⛓️  -  asynchronously executes functions in parallel']),
+      Li({
+        style: { listStyle: 'none' },
+      }, ['🎴 - can be used to create transducers']),
     ]),
     P(null, [
       'All methods have a runnable and editable code example.',
@@ -811,7 +814,7 @@ const CodeRunner = e(x => {
       style: {
         display: 'grid',
         gridTemplateColumns: '3em 1em auto',
-        height: '5em',
+        height: '6em',
       },
     }, [
       Button({
@@ -843,7 +846,7 @@ const CodeRunner = e(x => {
       Iframe({
         style: {
           visibility: outputAreaSrc ? 'visible' : 'hidden',
-          height: '5em',
+          height: '6em',
           position: 'relative',
           bottom: '-0.05em',
         },
@@ -869,7 +872,7 @@ const x = {
     pipe: {
       name: 'pipe',
       signature: 'y = pipe(functions)(x)',
-      description: 'define flow: chain functions together 🔗',
+      description: 'define flow: chain functions together 🔗 🎴',
       next: 'fork',
       rules: [
         [SC('functions'), 'is an array of functions'],
@@ -952,7 +955,32 @@ asyncGreetAll('hello').then(console.log)
           signature: 'y = fork.series(functions)(x)',
           description: 'fork in series 🔗',
           rules: [
+            [SC('functions'), 'is an array of functions or an object of functions'],
             ['all functions of', SC('functions'), 'are run in series'],
+            [SC('x'), 'is anything'],
+            [
+              SC('y'), 'is the', SC('functions'),
+              '-shaped product of applying each function to', SC('x'),
+            ],
+            [SC('y'), 'is a Promise if any of the following are true'],
+            [SList([
+              ['any function of', SC('functions'), 'is asynchronous'],
+            ])],
+            [CodeRunner({
+              code: `
+const sleep = ms => () => new Promise(
+  resolve => setTimeout(resolve, ms)
+)
+
+fork.series([
+  x => console.log(x + ' world'),
+  sleep(1000),
+  x => console.log(x + ' mom'),
+  sleep(1000),
+  x => console.log(x + ' darkness'),
+])('hello')
+`.trimStart(),
+            })],
           ],
         },
       ],
@@ -960,7 +988,7 @@ asyncGreetAll('hello').then(console.log)
     assign: {
       name: 'assign',
       signature: 'y = assign(functions)(x)',
-      description: 'fork, then merge new flow with original ⛓️',
+      description: 'fork, then merge new flow with original ⛓️ 🎴 ',
       prev: 'fork',
       next: 'tap',
       rules: [
@@ -1000,7 +1028,7 @@ asyncPutValues({ a: 1, b: 2, c: 3 }).then(console.log)
       next: 'tryCatch',
       rules: [
         [SC('f'), 'is a function'],
-        [SC('x'), 'is anything'],
+        [SC('x'), 'is anything but a function'],
         [SC('y'), 'is', SC('x')],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1022,11 +1050,11 @@ pipe([
         {
           name: 'tap (transducing)',
           signature: 'tapReducer = tap(f)(reducer)',
-          description: 'tap for transducer pipelines',
+          description: 'tap for transducers',
           rules: [
             [SC('f'), 'is a function'],
             [SC('reducer'), 'is a reducer function'],
-            [SC('tapReducer'), 'is a reducer function with', SB('tap'), 'functionality'],
+            [SC('tapReducer'), 'is', SC('reducer'), 'with effect', SC('f')],
             [CodeRunner({
               code: `
 const trace = tap(console.log)
@@ -1096,6 +1124,10 @@ console.log(errorThrower('hello'))
           SC('ifN(x)'), 'is the first truthful predicate, or',
           SC('elseDo(x)'), 'on no truthy predicates',
         ],
+        [SC('y'), 'is a promise if any of the following are true'],
+        [SList([
+          ['any evaluated function of', SC('functions'), 'is asynchronous'],
+        ])],
         [CodeRunner({
           code: `
 const isOdd = x => x % 2 === 1
@@ -1115,9 +1147,133 @@ evenOrOdd(2).then(console.log)
     map: {
       name: 'map',
       signature: 'y = map(f)(x)',
-      description: 'linearly transform data ⛓️',
+      description: 'linearly transform data ⛓ 🎴',
       prev: 'switchCase',
       next: 'filter',
+      rules: [
+        [SC('f'), 'is a function'],
+        [SC('x'), 'is an iterable, an async iterable, or an object'],
+        [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
+        [SC('y'), 'is a promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous and', SC('x'), 'is not an async iterable'],
+        ])],
+        [CodeRunner({
+          code: `
+const square = x => x ** 2
+
+console.log(map(square)([1, 2, 3, 4, 5]))
+
+console.log(map(Math.abs)(new Set([-2, -1, 0, 1, 2])))
+
+const asyncTriple = async x => x * 3
+
+map(asyncTriple)({ a: 1, b: 2, c: 3 }).then(console.log)
+`.trimStart(),
+        })],
+      ],
+      methods: [
+        {
+          name: 'map (transducing)',
+          signature: 'mapReducer = map(f)(reducer)',
+          description: 'map for transducers',
+          rules: [
+            [SC('f'), 'is a function'],
+            [SC('reducer'), 'is a reducer function'],
+            [
+              SC('mapReducer'), 'is', SC('reducer'), 'with pipeline elements',
+              'transformed according to', SC('f'),
+            ],
+            [CodeRunner({
+              code: `
+const square = x => x ** 2
+
+const add = (a, b) => a + b
+
+console.log(
+  [1, 2, 3, 4, 5].reduce(map(square)(add), 0),
+)
+`.trimStart(),
+            })],
+          ],
+        },
+        {
+          name: 'map.pool',
+          signature: 'y = map.pool(poolSize, f)(x)',
+          description: 'map with asynchronous limit ⛓️',
+          rules: [
+            [
+              SC('poolSize'),
+              'is the number of allowed asynchronous operations at any given moment'
+            ],
+            [SC('f'), 'is a function'],
+            [SC('x'), 'is an Array, Set, or Map'],
+            [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
+            [SC('y'), 'is always a promise'],
+            [CodeRunner({
+              code: `
+const delayedLog = x => new Promise(resolve => {
+  setTimeout(() => {
+    console.log(x)
+    resolve(x)
+  }, 1000)
+})
+
+console.log('start')
+map.pool(2, delayedLog)([1, 2, 3, 4, 5])
+`.trimStart(),
+            })],
+          ],
+        },
+        {
+          name: 'map.withIndex',
+          signature: 'y = map.withIndex(f)(x)',
+          description: 'map with index ⛓️',
+          rules: [
+            [SC('f'), 'is a function'],
+            [SC('x'), 'is an Array or String'],
+            [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
+            [SC('y'), 'is a promise if any of the following are true'],
+            [SList([
+              [SC('f'), 'is asynchronous'],
+            ])],
+            [CodeRunner({
+              code: `
+console.log(
+  map.withIndex((_, i) => i + 1)([0, 0, 0, 0, 0]),
+)
+`.trimStart(),
+            })],
+          ],
+        },
+        {
+          name: 'map.series',
+          signature: 'y = map.series(f)(x)',
+          description: 'map in series 🔗',
+          rules: [
+            [SC('f'), 'is a function'],
+            [SC('x'), 'is an Array'],
+            [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
+            [SC('y'), 'is a promise if any of the following are true'],
+            [SList([
+              [SC('f'), 'is asynchronous'],
+            ])],
+            [CodeRunner({
+              code: `
+const delayedLog = x => new Promise(resolve => {
+  setTimeout(() => {
+    console.log(x)
+    resolve(x)
+  }, 1000)
+})
+
+console.log('start')
+map.series(delayedLog)([1, 2, 3, 4, 5])
+`.trimStart(),
+            })],
+          ],
+        },
+      ],
     },
   },
 }
