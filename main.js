@@ -1381,21 +1381,31 @@ console.log(uniqueInOrder([1,2,2,3,3]))
     },
     reduce: {
       name: 'reduce',
-      signature: 'y = reduce(f, x0)(x)',
+      signature: 'y = reduce((accumulator, xi) => nextAccumulator, init)(x)',
       description: 'execute data transformation (idiomatic) 🔗 🏎',
       prev: 'filter',
       next: 'transform',
       rules: [
-        [SC('f'), 'is a reducer function'],
-        [SC('x0'), 'is an optional initial value for', SC('y')],
+        [SC('(accumulator, xi) => nextAccumulator'), 'is a reducer function'],
+        [SC('init'), 'is optional and can be anything including a function'],
+        [SC('init'), 'is the initial value for', SC('accumulator')],
+        ['if', SC('init'), 'is a function, it is lazily evaluated as', SC('init(x)')],
+        [
+          'WARNING: passing a non-primitive as', SC('init'),
+          'such as', SC('reduce(f, [])'), 'is unsafe and could cause unexpected behavior.',
+        ],
+        [
+          'It is generally safer to initialize collections by function, e.g.',
+          SC('reduce(f, () => [])'),
+        ],
         [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
         [SList([
           [SC('xi'), 'is an element of', SC('x')],
         ])],
-        [SC('y'), 'is the last', SC('f(y, xi)'), 'upon iterating through each', SC('xi'), 'of', SC('x')],
+        [SC('y'), 'is the transformed value according to', SC('(accumulator, xi) => nextAccumulator'), 'and', SC('init')],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
-          [SC('f'), 'is asynchronous'],
+          [SC('(accumulator, xi) => nextAccumulator'), 'is asynchronous'],
           [SC('x'), 'is an AsyncIterable'],
         ])],
         [CodeRunner({
@@ -1421,7 +1431,7 @@ const concat = (y, xi) => y.concat([xi])
 
 reduce(
   concat,
-  [],
+  () => [],
 )(asyncNumbersGeneratedIterable).then(console.log) // > [1, 2, 3, 4, 5]
 `.trimStart(),
         })],
@@ -1429,15 +1439,25 @@ reduce(
     },
     transform: {
       name: 'transform',
-      signature: 'y = transform(f, x0)(x)',
+      signature: 'y = transform(f, init)(x)',
       description: 'execute data transformation (expressive) 🔗 🏎',
       prev: 'reduce',
       next: 'flatMap',
       rules: [
         [SC('f'), 'is a transducer, see', SLink(TRANDUCERS_URL, ['transducers'])],
-        [SC('x0'), 'is null, Array, String, Set, Map, TypedArray, or Writable'],
+        [SC('init'), 'is null, Array, String, Set, Map, TypedArray, Writable, or a function'],
+        ['if', SC('init'), 'is a function, it is lazily evaluated as', SC('init(x)')],
+        [
+          'WARNING: passing a non-primitive as', SC('init'),
+          'such as', SC('transform(f, [])'), 'is unsafe and could cause unexpected behavior.',
+        ],
+        [
+          'It is generally safer to initialize collections by function, e.g.',
+          SC('transform(f, () => [])'),
+        ],
         [SC('x'), 'is an Iterable, AsyncIterable, or Object'],
-        [SC('y'), 'is', SC('x'), 'transformed with', SC('f'), 'into', SC('x0')],
+        [SC('y'), 'is', SC('x'), 'transformed with', SC('f'), 'into value given by', SC('init')],
+        [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
           [SC('f'), 'is asynchronous'],
           [SC('x'), 'is an AsyncIterable'],
@@ -1455,7 +1475,7 @@ const asyncTriple = async x => x * 3
 
 transform(
   map(asyncTriple),
-  [],
+  () => [],
 )(new Set([1, 2, 3])).then(console.log) // > [3, 6, 9]
 
 const asyncNumbersGeneratedIterable = (async function*() {
@@ -1464,7 +1484,7 @@ const asyncNumbersGeneratedIterable = (async function*() {
 
 transform(
   map(square),
-  new Set(),
+  () => new Set(),
 )(asyncNumbersGeneratedIterable).then(console.log) // > Set { 1, 4, 9, 16, 25 }
 `.trimStart(),
         })],
@@ -1823,6 +1843,14 @@ lte(10, async x => x)(10).then(console.log) // > true
         [SC('path'), 'is a Number, String, dot-delimited String, or Array'],
         [SC('defaultValue'), 'is anything including a function and is optional'],
         ['if', SC('defaultValue'), 'is a function, it is lazily evaluated as', SC('defaultValue(x)')],
+        [
+          'WARNING: passing a non-primitive as', SC('defaultValue'),
+          'such as', SC('get(path, [])'), 'is unsafe and could cause unexpected behavior.',
+        ],
+        [
+          'It is generally safer to initialize collections by function, e.g.',
+          SC('get(path, () => [])'),
+        ],
         [SC('x'), 'is an Object'],
         [SC('y'), 'is the value that lies at the end of', SC('path')],
         [CodeRunner({
