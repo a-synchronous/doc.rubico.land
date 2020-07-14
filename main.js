@@ -1667,7 +1667,7 @@ not(async x => isOdd(x))(1).then(console.log) // false
     eq: {
       name: 'eq',
       signature: 'y = eq(left, right)(x)',
-      description: 'test if left equals right',
+      description: 'test if left strictly equals right',
       prev: 'not',
       next: 'gt',
       rules: [
