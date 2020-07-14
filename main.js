@@ -1821,7 +1821,8 @@ lte(10, async x => x)(10).then(console.log) // > true
       next: 'pick',
       rules: [
         [SC('path'), 'is a Number, String, dot-delimited String, or Array'],
-        [SC('defaultValue'), 'is anything but a function and is optional'],
+        [SC('defaultValue'), 'is anything including a function and is optional'],
+        ['if', SC('defaultValue'), 'is a function, it is lazily evaluated as', SC('defaultValue(x)')],
         [SC('x'), 'is an Object'],
         [SC('y'), 'is the value that lies at the end of', SC('path')],
         [CodeRunner({
