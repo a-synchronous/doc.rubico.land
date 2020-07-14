@@ -274,6 +274,10 @@ const RubicoAPIMethods = e(x => Div({
         name: 'transform',
         description: get('methods.transform.description')(x),
       })(x),
+      RubicoAPIMethodLink({
+        name: 'flatMap',
+        description: get('methods.flatMap.description')(x),
+      })(x),
     ]),
   ]),
   Section(null, [
@@ -575,7 +579,7 @@ const NotFound = e(() => H1(null, ['not found']))
 
 const rubicoAPIMethods = new Set([
   'pipe', 'fork', 'assign',
-  'tap', 'tryCatch', 'switchCase',
+  'tap', 'tryCatch', 'switchCase', 'flatMap',
   'map', 'filter', 'reduce', 'transform',
   'any', 'all', 'and', 'or', 'not',
   'eq', 'gt', 'lt', 'gte', 'lte',
@@ -687,7 +691,7 @@ Promise.all([
   const {
     pipe, fork, assign,
     tap, tryCatch, switchCase,
-    map, filter, reduce, transform,
+    map, filter, reduce, transform, flatMap,
     any, all, and, or, not,
     eq, gt, lt, gte, lte,
     get, pick, omit,
@@ -1139,7 +1143,7 @@ console.log(errorThrower('hello'))
           SC('ifN(x)'), 'is the first truthy predicate, or',
           SC('elseDo(x)'), 'on no truthy predicates',
         ],
-        [SC('y'), 'is a promise if any of the following are true'],
+        [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
           ['any evaluated function of', SC('functions'), 'is asynchronous'],
         ])],
@@ -1169,7 +1173,7 @@ evenOrOdd(2).then(console.log)
         [SC('f'), 'is a function'],
         [SC('x'), 'is an Iterable, AsyncIterable, Object, or reducer function'],
         [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
-        [SC('y'), 'is a promise if any of the following are true'],
+        [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
           [SC('f'), 'is asynchronous and', SC('x'), 'is not an AsyncIterable'],
         ])],
@@ -1248,7 +1252,7 @@ map.pool(2, delayedLog)([1, 2, 3, 4, 5])
             [SC('f'), 'is a function'],
             [SC('x'), 'is an Array or String'],
             [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
-            [SC('y'), 'is a promise if any of the following are true'],
+            [SC('y'), 'is a Promise if any of the following are true'],
             [SList([
               [SC('f'), 'is asynchronous'],
             ])],
@@ -1269,7 +1273,7 @@ console.log(
             [SC('f'), 'is a function'],
             [SC('x'), 'is an Array'],
             [SC('y'), 'is the linear transformation of', SC('x'), 'with', SC('f')],
-            [SC('y'), 'is a promise if any of the following are true'],
+            [SC('y'), 'is a Promise if any of the following are true'],
             [SList([
               [SC('f'), 'is asynchronous'],
             ])],
@@ -1300,7 +1304,7 @@ map.series(delayedLog)([1, 2, 3, 4, 5])
         [SC('f'), 'is a predicate function'],
         [SC('x'), 'is an Iterable, AsyncIterable, Object, or reducer function'],
         [SC('y'), 'is', SC('x'), 'with elements excluded by', SC('f')],
-        [SC('y'), 'is a promise if any of the following are true'],
+        [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
           [SC('f'), 'is asynchronous'],
         ])],
@@ -1350,7 +1354,7 @@ console.log(
             [SC('f'), 'is a function'],
             [SC('x'), 'is an Array or String'],
             [SC('y'), 'is', SC('x'), 'with elements excluded by', SC('f')],
-            [SC('y'), 'is a promise if any of the following are true'],
+            [SC('y'), 'is a Promise if any of the following are true'],
             [SList([
               [SC('f'), 'is asynchronous'],
             ])],
@@ -1389,7 +1393,7 @@ console.log(uniqueInOrder([1,2,2,3,3]))
           [SC('xi'), 'is an element of', SC('x')],
         ])],
         [SC('y'), 'is the last', SC('f(y, xi)'), 'upon iterating through each', SC('xi'), 'of', SC('x')],
-        [SC('y'), 'is a promise if any of the following are true'],
+        [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
           [SC('f'), 'is asynchronous'],
           [SC('x'), 'is an AsyncIterable'],
@@ -1428,7 +1432,7 @@ reduce(
       signature: 'y = transform(f, x0)(x)',
       description: 'execute data transformation (expressive) 🔗 🏎',
       prev: 'reduce',
-      next: 'any',
+      next: 'flatMap',
       rules: [
         [SC('f'), 'is a transducer, see', SLink(TRANDUCERS_URL, ['transducers'])],
         [SC('x0'), 'is null, Array, String, Set, Map, TypedArray, or Writable'],
@@ -1466,11 +1470,68 @@ transform(
         })],
       ],
     },
+    flatMap: {
+      name: 'flatMap',
+      signature: 'y = flatMap(f)(x)',
+      description: 'one-to-many transform data ⛓ 🏎',
+      prev: 'transform',
+      next: 'any',
+      rules: [
+        [SC('f'), 'is a function'],
+        [SC('x'), 'is an Iterable or reducer function'],
+        [SList([
+          ['elements of', SC('f(x)'), 'are Iterable or Object'],
+        ])],
+        [SC('f'), 'is applied to the elements of', SC('x'), 'in parallel'],
+        [SC('y'), 'is the one-to-many, map then flatten transformation of', SC('x'), 'with', SC('f')],
+        [SC('y'), 'is a Promise if any of the following are true'],
+        [SList([
+          [SC('f'), 'is asynchronous'],
+        ])],
+        [CodeRunner({
+          code: `
+const powers = x => [x ** 2, x ** 3]
+
+console.log(
+  flatMap(powers)([1, 2, 3]),
+)
+
+console.log(
+  flatMap(powers)(new Set([1, 2, 3]))
+)
+          `.trimStart(),
+        })],
+      ],
+      methods: [
+        {
+          name: 'flatMap (transducing)',
+          signature: 'flatMapReducer = flatMap(f)(reducer)',
+          description: 'flatMap for transducers',
+          rules: [
+            [SC('f'), 'is a function'],
+            [SC('reducer'), 'is a reducer function'],
+            [
+              SC('flatMapReducer'), 'is', SC('reducer'), 'with pipeline elements',
+              'transformed according to', SC('f'), 'then flattened into the aggregate',
+            ],
+            [CodeRunner({
+              code: `
+const powers = x => [x ** 2, x ** 3]
+
+console.log(
+  transform(flatMap(powers), () => [])([1, 2, 3]),
+)
+              `.trimStart(),
+            })],
+          ],
+        },
+      ],
+    },
     any: {
       name: 'any',
       signature: 'y = any(f)(x)',
       description: 'test if function of any data truthy ⛓️',
-      prev: 'transform',
+      prev: 'flatMap',
       next: 'all',
       rules: [
         [SC('f'), 'is a function'],
