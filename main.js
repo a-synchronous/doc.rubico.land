@@ -1042,7 +1042,7 @@ asyncPutValues({ a: 1, b: 2, c: 3 }).then(console.log)
     tap: {
       name: 'tap',
       signature: 'y = tap(f)(x)',
-      description: 'spy on flow 🏎',
+      description: 'spy on flow',
       prev: 'assign',
       next: 'tryCatch',
       rules: [
