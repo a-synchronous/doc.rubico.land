@@ -938,7 +938,7 @@ asyncAddABC('').then(console.log)
       rules: [
         [SC('functions'), 'is an array of functions or an object of functions'],
         ['all functions of', SC('functions'), 'are run concurrently'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [
           SC('y'), 'is the', SC('functions'),
           '-shaped product of applying each function to', SC('x'),
@@ -976,7 +976,7 @@ asyncGreetAll('hello').then(console.log)
           rules: [
             [SC('functions'), 'is an array of functions or an object of functions'],
             ['all functions of', SC('functions'), 'are run in series'],
-            [SC('x'), 'is anything but a function'],
+            [SC('x'), 'is anything'],
             [
               SC('y'), 'is the', SC('functions'),
               '-shaped product of applying each function to', SC('x'),
@@ -1065,29 +1065,6 @@ pipe([
 `.trimStart(),
         })],
       ],
-      methods: [
-        {
-          name: 'tap (transducing)',
-          signature: 'tapReducer = tap(f)(reducer)',
-          description: 'tap for transducers',
-          rules: [
-            [SC('f'), 'is a function'],
-            [SC('reducer'), 'is a reducer function'],
-            [SC('tapReducer'), 'is', SC('reducer'), 'with effect', SC('f')],
-            [CodeRunner({
-              code: `
-const trace = tap(console.log)
-
-const add = (a, b) => a + b
-
-const sum = [1, 2, 3].reduce(trace(add), 0)
-
-console.log(sum)
-`.trimStart(),
-            })],
-          ],
-        },
-      ],
     },
     tryCatch: {
       name: 'tryCatch',
@@ -1101,7 +1078,7 @@ console.log(sum)
         [SList([
           [SC('err'), 'is an error potentially thrown by', SC('tryer')],
         ])],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is', SC('tryer(x)'), 'or', SC('catcher(err, x)'), 'on error'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1137,7 +1114,7 @@ console.log(errorThrower('hello'))
           [SC('elseDo'), 'is a do function'],
           [SC('functions'), 'is at minimum', SC('[if1, do1, elseDo]')],
         ])],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [
           SC('y'), 'is', SC('doN(x)'), 'where the corresponding',
           SC('ifN(x)'), 'is the first truthy predicate, or',
@@ -1609,7 +1586,7 @@ all(asyncExists)({ a: 1, b: 2, c: null }).then(console.log) // > false
       next: 'or',
       rules: [
         [SC('functions'), 'is an array of functions'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if all functions of', SC('functions'), 'evaluated with', SC('x'), 'are truthy'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1638,7 +1615,7 @@ and([asyncIsOdd, lessThan3])(3).then(console.log) // > false
       next: 'not',
       rules: [
         [SC('functions'), 'is an array of functions'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if any functions of', SC('functions'), 'evaluated with', SC('x'), 'are truthy'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1667,7 +1644,7 @@ or([asyncIsOdd, lessThan3])(6).then(console.log) // > false
       next: 'eq',
       rules: [
         [SC('f'), 'is a predicate function'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if', SC('f(x)'), 'is falsy'],
         [SC('y'), 'is a Promise if any of the following are true'],
         [SList([
@@ -1693,7 +1670,7 @@ not(async x => isOdd(x))(1).then(console.log) // false
       rules: [
         [SC('left'), 'is any value or function'],
         [SC('right'), 'is any value or function'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if', SC('leftCompare'), 'strictly equals', SC('rightCompare')],
         [SList([
           [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
@@ -1726,7 +1703,7 @@ eq(1, asyncSquare)(1).then(console.log) // > true
       rules: [
         [SC('left'), 'is any value or function'],
         [SC('right'), 'is any value or function'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if', SC('leftCompare'), 'is greater than', SC('rightCompare')],
         [SList([
           [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
@@ -1755,7 +1732,7 @@ gt(10, async x => x)(11).then(console.log) // > false
       rules: [
         [SC('left'), 'is any value or function'],
         [SC('right'), 'is any value or function'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if', SC('leftCompare'), 'is less than', SC('rightCompare')],
         [SList([
           [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
@@ -1784,7 +1761,7 @@ lt(10, async x => x)(11).then(console.log) // > true
       rules: [
         [SC('left'), 'is any value or function'],
         [SC('right'), 'is any value or function'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if', SC('leftCompare'), 'is greater than or equal to', SC('rightCompare')],
         [SList([
           [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
@@ -1813,7 +1790,7 @@ gte(10, async x => x)(10).then(console.log) // > true
       rules: [
         [SC('left'), 'is any value or function'],
         [SC('right'), 'is any value or function'],
-        [SC('x'), 'is anything but a function'],
+        [SC('x'), 'is anything'],
         [SC('y'), 'is true if', SC('leftCompare'), 'is less than or equal to', SC('rightCompare')],
         [SList([
           [SC('leftCompare'), 'is', SC('left'), 'if left is a non-function value, else', SC('left(x)')],
