@@ -511,7 +511,7 @@ const RubicoAPI = e(x => Div({
     P(null, [
       'Welcome to the API documentation for ',
       B(null, ['rubico']),
-      ' - a robust, highly optimized, and dependency free syntax for async agnostic functional programming in JavaScript. This page only documents rubico\'s API methods. If you are looking for a fuller introduction, please visit the ',
+      ' - a robust, highly optimized syntax for async agnostic functional programming in JavaScript. This page only documents rubico\'s API methods. If you are looking for a fuller introduction, please visit the ',
       A({ href: 'https://github.com/a-synchronous/rubico' }, ['github repository']),
       '.',
     ]),
