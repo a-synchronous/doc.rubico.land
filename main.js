@@ -875,7 +875,7 @@ const CodeRunner = e(x => {
   ])
 })
 
-const TRANDUCERS_URL = 'https://github.com/a-synchronous/rubico#transducers'
+const TRANDUCERS_URL = 'https://github.com/a-synchronous/rubico/blob/master/TRANSDUCERS.md'
 
 const x = {
   assets: {
